@@ -32,10 +32,10 @@ Following is the flowchart showing the general sequence for using Memcached:
 
 ### Generate Access keys (access key ID and secret access key)
 The installation of Terraform on your desktop or laptop needs to communicate with AWS. Thus, Terraform needs to be able to authenticate with AWS. For authentication, generate access keys (access key ID and secret access key). These access keys are used by Terraform for making programmatic calls to AWS via the AWS CLI.
-To generate access key and secret key, follow this [documentation](https://github.com/zachlas/arm-software-developers-ads/blob/main/content/learning-paths/server-and-cloud/mysql/ec2_deployment.md#generate-access-keys-access-key-id-and-secret-access-key).
+To generate an access key and secret key, follow this [documentation](https://github.com/zachlas/arm-software-developers-ads/blob/main/content/learning-paths/server-and-cloud/mysql/ec2_deployment.md#generate-access-keys-access-key-id-and-secret-access-key).
 
 ### Generate key-pair(public key, private key)
-Before using Terraform, first generate the key-pair (public key, private key) using ssh-keygen. Then associate both public and private keys with AWS EC2 instances.
+Before using Terraform, first generate the key-pair (public key and private key) using ssh-keygen. Then associate both public and private keys with AWS EC2 instances.
 
 Generate the key-pair using the following command:
 ```console
@@ -43,7 +43,7 @@ ssh-keygen -t rsa -b 2048
 ```
 ![ssh-keygen](https://user-images.githubusercontent.com/71631645/212669106-803c3474-360c-4275-b05e-e9f0aba01d38.jpg)
 
-**Note:** Use the public key mysql_h.pub inside the Terraform file to provision/start the instance and private key mysql_h to connect to the instance.
+**Note:** Use the public key mysql_h.pub inside the Terraform file to provision/start the instance and the private key mysql_h to connect to the instance.
 
 ### Create Terraform file (main.tf)
 After generating the keys, we have to create the MySQL instances. Then we will push our public key to the **authorized_keys** folder in `~/.ssh`. We will also create a security group that opens inbound ports `22` (ssh) and `3306` (MySQL). Below is a Terraform file called `main.tf` that will do this for us.
@@ -167,8 +167,8 @@ terraform apply
 ![tf apply](https://user-images.githubusercontent.com/71631645/216935497-ed893abe-5ad2-456f-8a26-a523a34a983f.jpg)
 
 ## Configure MySQL through Ansible
-To run Ansible, we have to create two `.yml` files, one for each MySQL instance, which is also known as Ansible-Playbook. Playbook contains a collection of tasks.     
-Here is the complete YML file of Ansible-Playbook for both the instances.      
+To run Ansible, we have to create two `.yml` files, one for each MySQL instance, which is also known as an Ansible-Playbook. Playbook contains a collection of tasks.     
+Here is the complete YML file for Ansible-Playbook for both instances.      
 For `MYSQL_TEST1`:
 
 ```console
@@ -337,7 +337,7 @@ For `MYSQL_TEST2`:
 **NOTE:-** We are using [table1.sql](https://github.com/hirnimeshrampuresoftware/arm-software-developers-ads/files/10433744/table_dot_sql.txt) and [table2.sql](https://github.com/hirnimeshrampuresoftware/arm-software-developers-ads/files/10661786/table2_dot_sql.txt)
  script file to dump data. Specify the path of the files accordingly. Replace `{{Your_mysql_password}}` and `{{Give_any_password}}` with your own password.
 
-In our case, the inventory file will generate automatically. This file is formed after the `terraform apply` command. 
+In our case, the inventory file will be generated automatically. This file is formed after the `terraform apply` command. 
 
 ### Ansible Commands
 To run a Playbook, we need to use the `ansible-playbook` command.
@@ -427,24 +427,24 @@ else:
     for row in data:
         print (f"{row[0]},{row[1]}")
 ```
-We are using the `arm_test1` and `arm_test2` databases created above. Replace `{{Your_database_user}}` and `{{Your_database_password}}` with the database user and password created above and `{{public_ip of MYSQL_TEST1}}` and `{{public_ip of MYSQL_TEST2}}` with the public IPs generated in inventory.txt file after running the terraform commands.
+We are using the `arm_test1` and `arm_test2` databases created above. Replace `{{Your_database_user}}` and `{{Your_database_password}}` with the database user and password created above, and `{{public_ip of MYSQL_TEST1}}` and `{{public_ip of MYSQL_TEST2}}` with the public IPs generated in the inventory.txt file after running the Terraform commands.
 
-When the script is executed for the first time, the data is loaded from the MySQL database and stored to the Memcached server.
+When the script is executed for the first time, the data is loaded from the MySQL database and stored on the Memcached server.
 
 ![mem1](https://user-images.githubusercontent.com/71631645/217153567-bc8748ae-b963-4e00-ac2f-9c5319e70c2f.jpg)
 ![mem2](https://user-images.githubusercontent.com/71631645/217151671-b4c46cee-3888-4b51-9cd0-350be25f4f6e.jpg)
 
-When executed after that, it loads the data from Memcached. In the example above, the information stored to Memcached is in the form of rows from a Python DB cursor. When accessing the information (within the 60 second expiry time), the data is loaded from Memcached and dumped:
+When executed after that, it loads the data from Memcached. In the example above, the information stored in Memcached is in the form of rows from a Python DB cursor. When accessing the information (within the 60 second expiry time), the data is loaded from Memcached and dumped:
 
 ![mem1load](https://user-images.githubusercontent.com/71631645/217153599-9d963f94-61f3-41a5-87e2-07dd849b7511.jpg)                         
 ![mem12load](https://user-images.githubusercontent.com/71631645/217153604-301a9201-1bab-4728-a724-0e2558a627bf.jpg)           
 
 ### Memcached Telnet Commands
-To verify that the MySQL query is getting stored in the Memcached, connect to Memcached server with telnet and start a session:
+To verify that the MySQL query is getting stored in Memcached, connect to the Memcached server with Telnet and start a session:
 ```console
 telnet localhost 11211
 ```
-To retrieve data from Memcached through telnet:
+To retrieve data from Memcached through Telnet:
 ```console
 get <key>
 ```
