@@ -127,14 +127,13 @@ ansible_user=ubuntu
 
 resource "aws_key_pair" "deployer" {
         key_name   = "mysql_h"
-        public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/GFk2t5I2WOGWIP11kk9+sS2hwb+SuZV8b6KAi8IPR50pDjBXtBBt/8Apl+cyTmUjIlVxnyV6rS4sGVdKLC7SDNU8nl1SfDuh1HJRtlbMu8k+OmA3i9T/rihz2Qs9htkbSkdZ3bADCd5tcregPIht1bdQkjFK5zpbmiNHqIC1KJYIKfiwHMCLt+3ZQWr8iw1G19hHLbfpvDr0H/ewlrpMNG3StJSo6E2Jec6NZ09takFMl0a2r9Cej3bSQz5TuDnxWFDm1xk2svLojROnNeSH2sVx6UoPDpt05eniqgpYdMysYzxeOwS+qMHzR2IV2+0UoDFMxgcSgnhM36qlSk7H ubuntu@ip-172-31-38-39"
+        public_key = "ssh-rsaxxxxxxxxxxxxxxx"
 } 
     
 ```
-**NOTE:-** Replace `public_key`, `access_key`, `secret_key`, and `key_name` with your values.
+**NOTE:-** Replace `public_key` with the value of `mysql_h.pub` file present inside `.ssh`, `access_key` and `secret_key` with the values generated [here](https://github.com/hirnimeshrampuresoftware/arm-software-developers-ads/blob/main/content/learning-paths/server-and-cloud/mysql/mysql_memcached.md#generate-access-keys-access-key-id-and-secret-access-key), and `key_name` with the name of the key set [here](https://github.com/hirnimeshrampuresoftware/arm-software-developers-ads/blob/main/content/learning-paths/server-and-cloud/mysql/mysql_memcached.md#generate-access-keys-access-key-id-and-secret-access-key). 
 
 Now, use the below Terraform commands to deploy the `main.tf` file.
-
 
 ## Terraform Commands
 
