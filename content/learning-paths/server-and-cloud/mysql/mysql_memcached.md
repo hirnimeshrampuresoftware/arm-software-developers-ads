@@ -16,7 +16,7 @@ layout: "learningpathall"
 * [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
 * [Ansible](https://www.cyberciti.biz/faq/how-to-install-and-configure-latest-version-of-ansible-on-ubuntu-linux/)
 * [Terraform](https://developer.hashicorp.com/terraform/cli/install/apt)
-* [Python](https://opensource.com/article/20/4/install-python-linux)
+* [Python](https://beebom.com/how-install-python-ubuntu-linux/)
 * [Memcached](https://github.com/memcached/memcached/wiki/Install)
 * [Telnet](https://adamtheautomator.com/linux-to-install-telnet/)
 
@@ -43,7 +43,7 @@ ssh-keygen -t rsa -b 2048
 ```
 ![ssh-keygen](https://user-images.githubusercontent.com/71631645/212669106-803c3474-360c-4275-b05e-e9f0aba01d38.jpg)
 
-**Note:** Use the public key mysql_h.pub inside the Terraform file to provision/start the instance and the private key mysql_h to connect to the instance.
+**Note:** Use the public key `mysql_h.pub` inside the Terraform file to provision/start the instance and the private key `mysql_h` to connect to the instance.
 
 ### Create Terraform file (main.tf)
 After generating the keys, we have to create the MySQL instances. Then we will push our public key to the **authorized_keys** folder in `~/.ssh`. We will also create a security group that opens inbound ports `22` (ssh) and `3306` (MySQL). Below is a Terraform file called `main.tf` that will do this for us.
@@ -427,7 +427,7 @@ else:
     for row in data:
         print (f"{row[0]},{row[1]}")
 ```
-We are using the `arm_test1` and `arm_test2` databases created above. Replace `{{Your_database_user}}` and `{{Your_database_password}}` with the database user and password created above, and `{{public_ip of MYSQL_TEST1}}` and `{{public_ip of MYSQL_TEST2}}` with the public IPs generated in the inventory.txt file after running the Terraform commands.
+We are using the `arm_test1` and `arm_test2` databases created above. Replace `{{Your_database_user}}` and `{{Your_database_password}}` with the database user and password created above, and `{{public_ip of MYSQL_TEST1}}` and `{{public_ip of MYSQL_TEST2}}` with the public IPs generated in the `inventory.txt` file after running the Terraform commands.
 
 When the script is executed for the first time, the data is loaded from the MySQL database and stored on the Memcached server.
 
