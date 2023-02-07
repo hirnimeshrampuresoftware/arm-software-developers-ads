@@ -34,7 +34,7 @@ Following is the flowchart showing the general sequence for using Memcached:
 The installation of Terraform on your desktop or laptop needs to communicate with AWS. Thus, Terraform needs to be able to authenticate with AWS. For authentication, generate access keys (access key ID and secret access key). These access keys are used by Terraform for making programmatic calls to AWS via the AWS CLI.
 To generate an access key and secret key, follow this [documentation](https://github.com/zachlas/arm-software-developers-ads/blob/main/content/learning-paths/server-and-cloud/mysql/ec2_deployment.md#generate-access-keys-access-key-id-and-secret-access-key).
 
-### Generate key-pair(public key, private key)
+### Generate key-pair (public key, private key)
 Before using Terraform, first generate the key-pair (public key and private key) using ssh-keygen. Then associate both public and private keys with AWS EC2 instances.
 
 Generate the key-pair using the following command:
@@ -131,7 +131,7 @@ resource "aws_key_pair" "deployer" {
 } 
     
 ```
-**NOTE:-** Replace `public_key` with the value of `mysql_h.pub` file present inside `.ssh`, `access_key` and `secret_key` with the values generated [here](https://github.com/hirnimeshrampuresoftware/arm-software-developers-ads/blob/main/content/learning-paths/server-and-cloud/mysql/mysql_memcached.md#generate-access-keys-access-key-id-and-secret-access-key), and `key_name` with the name of the key set [here](https://github.com/hirnimeshrampuresoftware/arm-software-developers-ads/blob/main/content/learning-paths/server-and-cloud/mysql/mysql_memcached.md#generate-access-keys-access-key-id-and-secret-access-key). 
+**NOTE:-** Replace `public_key` with the value of `mysql_h.pub` file present inside `.ssh`, `access_key` and `secret_key` with the values generated [here](https://github.com/hirnimeshrampuresoftware/arm-software-developers-ads/blob/main/content/learning-paths/server-and-cloud/mysql/mysql_memcached.md#generate-access-keys-access-key-id-and-secret-access-key), and `key_name` with the name of the key set [here](https://github.com/hirnimeshrampuresoftware/arm-software-developers-ads/blob/main/content/learning-paths/server-and-cloud/mysql/mysql_memcached.md#generate-key-pairpublic-key-private-key). 
 
 Now, use the below Terraform commands to deploy the `main.tf` file.
 
