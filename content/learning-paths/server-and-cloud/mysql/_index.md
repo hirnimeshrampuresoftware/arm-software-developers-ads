@@ -10,6 +10,7 @@ who_is_this_for: This is an introductory topic for software developers who want 
 learning_objectives: 
     - Deploy single instance of MySQL through Docker, RDS and an AWS EC2
     - Automate MySQL EC2 instance creation using Terraform and Ansible
+    - Deploy Memcached as a cache for MySQL 
 
 prerequisites:
     - An Amazon Web Services (AWS) account
