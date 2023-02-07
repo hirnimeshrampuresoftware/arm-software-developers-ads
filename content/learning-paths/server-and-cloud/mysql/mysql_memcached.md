@@ -436,7 +436,7 @@ When the script is executed for the first time, the data is loaded from the MySQ
 
 When executed after that, it loads the data from Memcached. In the example above, the information stored to Memcached is in the form of rows from a Python DB cursor. When accessing the information (within the 60 second expiry time), the data is loaded from Memcached and dumped:
 
-![mem1load](https://user-images.githubusercontent.com/71631645/217153599-9d963f94-61f3-41a5-87e2-07dd849b7511.jpg)
+![mem1load](https://user-images.githubusercontent.com/71631645/217153599-9d963f94-61f3-41a5-87e2-07dd849b7511.jpg)                         
 ![mem12load](https://user-images.githubusercontent.com/71631645/217153604-301a9201-1bab-4728-a724-0e2558a627bf.jpg)           
 
 ### Memcached Telnet Commands
