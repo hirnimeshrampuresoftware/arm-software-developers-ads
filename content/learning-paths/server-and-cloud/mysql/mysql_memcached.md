@@ -131,7 +131,7 @@ resource "aws_key_pair" "deployer" {
 } 
     
 ```
-**NOTE:-** Replace `public_key` with the value of `mysql_h.pub` file present inside `.ssh` and `access_key`, `secret_key` and `key_name` with the values generated above.
+**NOTE:-** Replace `public_key` with the value of `mysql_h.pub` file present inside `.ssh` and `access_key`, `secret_key` and `key_name` with the values generated in the above steps to generate access keys and key-pair. The Terraform commands will automatically generate the `inventory.txt' file in the path provided in the filename. Specify the filename accordingly.
 
 Now, use the below Terraform commands to deploy the `main.tf` file.
 
@@ -168,7 +168,7 @@ terraform apply
 ## Configure MySQL through Ansible
 To run Ansible, we have to create two `.yml` files, one for each MySQL instance, which is also known as an Ansible-Playbook. Playbook contains a collection of tasks.     
 Here is the complete YML file for Ansible-Playbook for both instances.      
-For `MYSQL_TEST1`:
+`mysqlmodule1.yml` file for MYSQL_TEST1 instance:
 
 ```console
 ---
@@ -212,7 +212,7 @@ For `MYSQL_TEST1`:
         login_unix_socket: /run/mysqld/mysqld.sock
     - name: Copy database dump file
       copy:
-       src: /home/ubuntu/mysql/table1.sql
+       src: <path of table1.sql>
        dest: /tmp
     - name: Create a table with dummy values in database
       community.mysql.mysql_db:
@@ -251,7 +251,7 @@ For `MYSQL_TEST1`:
         state: restarted
 ```
 
-For `MYSQL_TEST2`:
+`mysqlmodule2.yml` file for MYSQL_TEST2 instance:
 ```console
 ---
 - hosts: mysql2
@@ -294,7 +294,7 @@ For `MYSQL_TEST2`:
         login_unix_socket: /run/mysqld/mysqld.sock
     - name: Copy database dump file
       copy:
-       src: /home/ubuntu/mysql/table2.sql
+       src: <path of table2.sql>
        dest: /tmp
     - name: Create a table with dummy values in database
       community.mysql.mysql_db:
@@ -336,8 +336,6 @@ For `MYSQL_TEST2`:
 
 **NOTE:-** We are using [table1.sql](https://github.com/hirnimeshrampuresoftware/arm-software-developers-ads/files/10681894/table1_dot_sql.txt) and [table2.sql](https://github.com/hirnimeshrampuresoftware/arm-software-developers-ads/files/10681895/table2_dot_sql.txt)
  script file to dump data. Specify the path of the files accordingly. Replace `{{Your_mysql_password}}` and `{{Give_any_password}}` with your own password.
-
-In our case, the inventory file will be generated automatically. This file is formed after the `terraform apply` command. 
 
 ### Ansible Commands
 To run a Playbook, we need to use the `ansible-playbook` command.
@@ -427,8 +425,12 @@ else:
     for row in data:
         print (f"{row[0]},{row[1]}")
 ```
-We are using the `arm_test1` and `arm_test2` databases created above. Replace `{{Your_database_user}}` and `{{Your_database_password}}` with the database user and password created above, and `{{public_ip of MYSQL_TEST1}}` and `{{public_ip of MYSQL_TEST2}}` with the public IPs generated in the `inventory.txt` file after running the Terraform commands.
-
+We are using the `arm_test1` and `arm_test2` databases created above through Ansible-Playbook. Replace `{{Your_database_user}}` and `{{Your_database_password}}` with the database user and password created there, and `{{public_ip of MYSQL_TEST1}}` and `{{public_ip of MYSQL_TEST2}}` with the public IPs generated in the `inventory.txt` file after running the Terraform commands.
+To execute the script, run the following commands:
+```console
+python3 mem1.py
+python3 mem2.py
+```
 When the script is executed for the first time, the data is loaded from the MySQL database and stored on the Memcached server.
 
 ![mem1](https://user-images.githubusercontent.com/71631645/217153567-bc8748ae-b963-4e00-ac2f-9c5319e70c2f.jpg)
@@ -448,4 +450,5 @@ To retrieve data from Memcached through Telnet:
 ```console
 get <key>
 ```
+**NOTE:-** Key is the variable in which we store the data. In the above python script, we are storing the data from table1 and table2 in in output and output1 respectively.
 ![telnet](https://user-images.githubusercontent.com/71631645/217169140-6693c2c0-4cd7-4cfb-9ae3-ded0d11778f0.jpg)
