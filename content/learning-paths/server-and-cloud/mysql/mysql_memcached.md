@@ -425,13 +425,10 @@ else:
     for row in data:
         print (f"{row[0]},{row[1]}")
 ```
-We are using the `arm_test1` and `arm_test2` databases created above through Ansible-Playbook. Replace `{{Your_database_user}}` and `{{Your_database_password}}` with the database user and password created there, and `{{public_ip of MYSQL_TEST1}}` and `{{public_ip of MYSQL_TEST2}}` with the public IPs generated in the `inventory.txt` file after running the Terraform commands.              
+We are using the `arm_test1` and `arm_test2` databases created above through Ansible-Playbook. Replace `{{Your_database_user}}` and `{{Your_database_password}}` with the database user and password created through Ansible-Playbook, and `{{public_ip of MYSQL_TEST1}}` and `{{public_ip of MYSQL_TEST2}}` with the public IPs generated in the `inventory.txt` file after running the Terraform commands.              
 To execute the script, run the following commands:
 ```console
-python3 mem1.py
-```
-```console
-python3 mem2.py
+python3 <filename.py>
 ```
 When the script is executed for the first time, the data is loaded from the MySQL database and stored on the Memcached server.
 
@@ -453,4 +450,5 @@ To retrieve data from Memcached through Telnet:
 get <key>
 ```
 **NOTE:-** Key is the variable in which we store the data. In the above python script, we are storing the data from table1 and table2 in `output` and `output1` respectively.
+
 ![telnet](https://user-images.githubusercontent.com/71631645/217169140-6693c2c0-4cd7-4cfb-9ae3-ded0d11778f0.jpg)
