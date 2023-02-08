@@ -353,7 +353,7 @@ Here is the output after the successful execution of the `ansible-playbook` comm
 
 ![ansible output2](https://user-images.githubusercontent.com/71631645/216966712-9c8e1f9f-910f-43f5-a655-2e78a35d69de.jpg)
 
-## Script to deploy Memcached as a cache for MySQL using Python
+## Deploy Memcached as a cache for MySQL using Python
 To deploy Memcached as a cache for MySQL using Python, create the following `mem1.py` and `mem2.py` files on the host machine to store data from each of the MySQL instances.     
 `mem1.py` file for MYSQL_TEST1:
 ```console
