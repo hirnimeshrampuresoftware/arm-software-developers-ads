@@ -298,7 +298,7 @@ For `MYSQL_TEST2`:
        dest: /tmp
     - name: Create a table with dummy values in database
       community.mysql.mysql_db:
-       name: arm_test1
+       name: arm_test2
        login_user: root
        login_password: {{Your_mysql_password}}
        login_host: localhost
