@@ -379,13 +379,13 @@ if not userdata:
     cursor = conn.cursor()
     cursor.execute('select user_id, username from user_details order by user_id desc limit 5')
     rows = cursor.fetchall()
-    # store the result in the memcached with an expiry time of 60 seconds
+    # store the result in the Memcached with an expiry time of 120 seconds
     memc.set('output',rows,120)
-    print ("Updated memcached with MySQL data")
+    print ("Updated Memcached with MySQL data")
     for x in rows:
         print(x)
 else:
-    print ("Loaded data from memcached")
+    print ("Loaded data from Memcached")
     data = tuple(literal_eval(userdata.decode("utf-8")))
     for row in data:
         print (f"{row[0]},{row[1]}")
@@ -416,11 +416,11 @@ if not filmdata:
     cursor.execute('select movie_id, title from movie order by movie_id desc limit 5')
     rows = cursor.fetchall()
     memc.set('output1',rows,120)
-    print ("Updated memcached with MySQL data")
+    print ("Updated Memcached with MySQL data")
     for x in rows:
         print(x)
 else:
-    print ("Loaded data from memcached")
+    print ("Loaded data from Memcached")
     data = tuple(literal_eval(filmdata.decode("utf-8")))
     for row in data:
         print (f"{row[0]},{row[1]}")
