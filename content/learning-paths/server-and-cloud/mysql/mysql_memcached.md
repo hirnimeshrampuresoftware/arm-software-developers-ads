@@ -334,7 +334,7 @@ For `MYSQL_TEST2`:
 
 ```
 
-**NOTE:-** We are using [table1.sql](https://github.com/hirnimeshrampuresoftware/arm-software-developers-ads/files/10674426/table_dot_sql.1.txt) and [table2.sql](https://github.com/hirnimeshrampuresoftware/arm-software-developers-ads/files/10674430/table2_dot_sql.txt)
+**NOTE:-** We are using [table1.sql](https://github.com/hirnimeshrampuresoftware/arm-software-developers-ads/files/10681894/table1_dot_sql.txt) and [table2.sql](https://github.com/hirnimeshrampuresoftware/arm-software-developers-ads/files/10681895/table2_dot_sql.txt)
  script file to dump data. Specify the path of the files accordingly. Replace `{{Your_mysql_password}}` and `{{Give_any_password}}` with your own password.
 
 In our case, the inventory file will be generated automatically. This file is formed after the `terraform apply` command. 
