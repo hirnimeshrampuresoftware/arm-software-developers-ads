@@ -131,7 +131,7 @@ resource "aws_key_pair" "deployer" {
 } 
     
 ```
-**NOTE:-** Replace `public_key` with the value of `mysql_h.pub` file present inside `.ssh` and `access_key`, `secret_key` and `key_name` with the values generated in the above steps to generate access keys and key-pair. The Terraform commands will automatically generate the `inventory.txt` file in the path provided in the filename. Specify the filename accordingly.
+**NOTE:-** Replace `public_key` with the value of `mysql_h.pub` file present inside `.ssh` folder and `access_key`, `secret_key` and `key_name` with the values generated in the above steps to generate access keys and key-pair. The Terraform commands will automatically generate the `inventory.txt` file in the path provided in the filename. Specify the filename accordingly.
 
 Now, use the below Terraform commands to deploy the `main.tf` file.
 
