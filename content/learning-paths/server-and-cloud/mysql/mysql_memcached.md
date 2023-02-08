@@ -131,7 +131,7 @@ resource "aws_key_pair" "deployer" {
 } 
     
 ```
-**NOTE:-** Replace `public_key` with the value of `mysql_h.pub` file present inside `.ssh`, `access_key` and `secret_key` with the values generated [here](https://github.com/hirnimeshrampuresoftware/arm-software-developers-ads/blob/main/content/learning-paths/server-and-cloud/mysql/mysql_memcached.md#generate-access-keys-access-key-id-and-secret-access-key), and `key_name` with the name of the key set [here](https://github.com/hirnimeshrampuresoftware/arm-software-developers-ads/blob/main/content/learning-paths/server-and-cloud/mysql/mysql_memcached.md#generate-key-pairpublic-key-private-key). 
+**NOTE:-** Replace `public_key` with the value of `mysql_h.pub` file present inside `.ssh` and `access_key`, `secret_key` and `key_name` with the values generated above.
 
 Now, use the below Terraform commands to deploy the `main.tf` file.
 
