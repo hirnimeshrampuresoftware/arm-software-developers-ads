@@ -425,7 +425,7 @@ else:
     for row in data:
         print (f"{row[0]},{row[1]}")
 ```
-We are using the `arm_test1` and `arm_test2` databases created above through Ansible-Playbook. Replace `{{Your_database_user}}` and `{{Your_database_password}}` with the database user and password created there, and `{{public_ip of MYSQL_TEST1}}` and `{{public_ip of MYSQL_TEST2}}` with the public IPs generated in the `inventory.txt` file after running the Terraform commands.
+We are using the `arm_test1` and `arm_test2` databases created above through Ansible-Playbook. Replace `{{Your_database_user}}` and `{{Your_database_password}}` with the database user and password created there, and `{{public_ip of MYSQL_TEST1}}` and `{{public_ip of MYSQL_TEST2}}` with the public IPs generated in the `inventory.txt` file after running the Terraform commands.              
 To execute the script, run the following commands:
 ```console
 python3 mem1.py
