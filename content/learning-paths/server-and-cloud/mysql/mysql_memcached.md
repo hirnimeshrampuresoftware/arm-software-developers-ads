@@ -113,7 +113,7 @@ resource "aws_security_group" "Terraformsecurity1" {
  }
 resource "local_file" "inventory" {
     depends_on=[aws_instance.MYSQL_TEST1, aws_instance.MYSQL_TEST2]
-    filename = "/home/ubuntu/mysql/inventory.txt"
+    filename = "/path/to/inventory/inventory.txt"
     content = <<EOF
 [mysql1]
 ${aws_instance.MYSQL_TEST1.public_ip}
@@ -131,7 +131,7 @@ resource "aws_key_pair" "deployer" {
 } 
     
 ```
-**NOTE:-** Replace `public_key` with the value of `mysql_h.pub` file present inside `.ssh` folder and `access_key`, `secret_key` and `key_name` with the values generated in the above steps to generate access keys and key-pair. The Terraform commands will automatically generate the `inventory.txt` file in the path provided in the filename. Specify the filename accordingly.
+**NOTE:-** Replace `access_key`, `secret_key`, and `key_name` with the values generated in the above steps to generate access keys and key-pair, and replace `public_key` with the value of the mysql h.pub file located inside the `.ssh` folder. The Terraform commands will automatically generate the `inventory.txt` file in the path provided in the filename. Specify the path accordingly.
 
 Now, use the below Terraform commands to deploy the `main.tf` file.
 
