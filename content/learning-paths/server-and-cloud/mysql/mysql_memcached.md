@@ -327,7 +327,7 @@ When the script is executed for the first time, the data is loaded from the MySQ
 ![mem1](https://user-images.githubusercontent.com/71631645/217153567-bc8748ae-b963-4e00-ac2f-9c5319e70c2f.jpg)
 ![mem2](https://user-images.githubusercontent.com/71631645/217151671-b4c46cee-3888-4b51-9cd0-350be25f4f6e.jpg)
 
-When executed after that, it loads the data from Memcached. In the example above, the information stored in Memcached is in the form of rows from a Python DB cursor. When accessing the information (within the 120 second expiry time), the data is loaded from Memcached and dumped:
+When executed after that, it loads the data from Memcached. In the example above, the information stored in Memcached is in the form of rows from a Python DB cursor. When accessing the information (within the 120 second expiry time), the data is loaded from Memcached and dumped.
 
 ![mem1load](https://user-images.githubusercontent.com/71631645/217153599-9d963f94-61f3-41a5-87e2-07dd849b7511.jpg)                         
 ![mem12load](https://user-images.githubusercontent.com/71631645/217153604-301a9201-1bab-4728-a724-0e2558a627bf.jpg)           
