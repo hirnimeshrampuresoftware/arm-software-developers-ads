@@ -46,26 +46,15 @@ provider "aws" {
   access_key  = "AXXXXXXXXXXXXXXXXXXX"
   secret_key   = "AXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 }
-  resource "aws_instance" "MYSQL_TEST1" {
+  resource "aws_instance" "MYSQL_TEST" {
+  count         = "2"
   ami           = "ami-064593a301006939b"
   instance_type = "t4g.small"
   security_groups= [aws_security_group.Terraformsecurity1.name]
   key_name = "mysql_h"
   tags = {
-    Name = "MYSQL_TEST1"
+    Name = "MYSQL_TEST"
   }
-
-}
-  resource "aws_instance" "MYSQL_TEST2" {
-  ami           = "ami-064593a301006939b"
-  instance_type = "t4g.small"
-  security_groups= [aws_security_group.Terraformsecurity1.name]
-  key_name = "mysql_h"
-  tags = {
-    Name = "MYSQL_TEST2"
-  }
-
-}
 
 resource "aws_default_vpc" "main" {
   tags = {
@@ -104,13 +93,13 @@ resource "aws_security_group" "Terraformsecurity1" {
 
  }
 resource "local_file" "inventory" {
-    depends_on=[aws_instance.MYSQL_TEST1, aws_instance.MYSQL_TEST2]
+    depends_on=[aws_instance.MYSQL_TEST]
     filename = "/path/to/inventory/inventory.txt"
     content = <<EOF
 [mysql1]
-${aws_instance.MYSQL_TEST1.public_ip}
+${aws_instance.MYSQL_TEST[0].public_ip}
 [mysql2]
-${aws_instance.MYSQL_TEST2.public_ip}
+${aws_instance.MYSQL_TEST[1].public_ip}
 [all:vars]
 ansible_connection=ssh
 ansible_user=ubuntu
@@ -176,7 +165,7 @@ Here is the complete YML file for Ansible-Playbook for both instances.
     - name: Copy database dump file
       when: "'mysql1' in group_names"    
       copy:
-       src: <path of table1.sql>
+       src: path/to/table1.sql
        dest: /tmp
     - name: Create a table with dummy values in database
       when: "'mysql1' in group_names"    
@@ -199,7 +188,7 @@ Here is the complete YML file for Ansible-Playbook for both instances.
     - name: Copy database dump file
       when: "'mysql2' in group_names"    
       copy:
-       src: <path of table2.sql>
+       src: path/to/table2.sql
        dest: /tmp
     - name: Create a table with dummy values in database
       when: "'mysql2' in group_names"    
@@ -257,7 +246,7 @@ Here is the output after the successful execution of the `ansible-playbook` comm
 
 ## Deploy Memcached as a cache for MySQL using Python
 To deploy Memcached as a cache for MySQL using Python, create the following **mem1.py** and **mem2.py** files on the host machine to store data from each of the MySQL instances.     
-**mem1.py** file for MYSQL_TEST1:
+**mem1.py** file for MYSQL_TEST[0]:
 ```console
 import sys
 import MySQLdb
@@ -267,7 +256,7 @@ from ast import literal_eval
 memc = pymemcache.Client("127.0.0.1:11211");
 
 try:
-    conn = MySQLdb.connect (host = "{{public_ip of MYSQL_TEST1}}",
+    conn = MySQLdb.connect (host = "{{public_ip of MYSQL_TEST[0]}}",
                             user = "{{Your_database_user}}",
                             passwd = "{{Your_database_password}}",
                             db = "arm_test1")
@@ -293,7 +282,7 @@ else:
         print (f"{row[0]},{row[1]}")
 ```
 
-**mem2.py** file for MYSQL_TEST2:
+**mem2.py** file for MYSQL_TEST[1]:
 ```console
 import sys
 import MySQLdb
@@ -303,7 +292,7 @@ from ast import literal_eval
 memc = pymemcache.Client("127.0.0.1:11211");
 
 try:
-    conn = MySQLdb.connect (host = "{{public_ip of MYSQL_TEST2}}",
+    conn = MySQLdb.connect (host = "{{public_ip of MYSQL_TEST[1]}}",
                             user = "{{Your_database_user}}",
                             passwd = "{{Your_database_password}}",
                             db = "arm_test2")
@@ -327,7 +316,8 @@ else:
     for row in data:
         print (f"{row[0]},{row[1]}")
 ```
-We are using the `arm_test1` and `arm_test2` databases created above through Ansible-Playbook. Replace `{{Your_database_user}}` and `{{Your_database_password}}` with the database user and password created through Ansible-Playbook, and `{{public_ip of MYSQL_TEST1}}` and `{{public_ip of MYSQL_TEST2}}` with the public IPs generated in the **inventory.txt** file after running the Terraform commands.              
+We are using the `arm_test1` and `arm_test2` databases created above through Ansible-Playbook. Replace `{{Your_database_user}}` and `{{Your_database_password}}` with the database user and password created through Ansible-Playbook, and `{{public_ip of MYSQL_TEST[0]}}` and `{{public_ip of MYSQL_TEST[1]}}` with the public IPs generated in the **inventory.txt** file after running the Terraform commands.    
+
 To execute the script, run the following command:
 ```console
 python3 <filename.py>
