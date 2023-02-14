@@ -245,8 +245,9 @@ Here is the output after the successful execution of the `ansible-playbook` comm
 ![ansible-end-final](https://user-images.githubusercontent.com/71631645/217766981-3e00b3f6-6ba8-47eb-9c8d-fefcd1685e36.jpg)
 
 ## Deploy Memcached as a cache for MySQL using Python
-We create two `.py` files on the host machine to deploy Memcached as a MySQL cache using Python: values.py and mem.py           
-**values.py** to store the IP addresses of the instances and the databases created in them.
+We create two `.py` files on the host machine to deploy Memcached as a MySQL cache using Python: values.py and mem.py  
+
+**values.py** to store the IP addresses of the instances and the database created in them.
 ```console
 MYSQL_TEST=[["{{public_ip of MYSQL_TEST[0]}}", "arm_test1"],
 ["{{public_ip of MYSQL_TEST[1]}}", "arm_test2"]]
@@ -300,13 +301,13 @@ for i in range(0,2):
 else:
     print("this database doesn't exist")            
 ```
-Replace `{{Your_database_user}}` & `{{Your_database_password}}` with the database user and password created through Ansible-Playbook.   
+Replace `{{Your_database_user}}` & `{{Your_database_password}}` with the database user and password created through Ansible-Playbook. Also change the `range` in `for loop` according to the number of instances created.
 
 To execute the script, run the following command:
 ```console
 python3 mem.py -db <database_name> -k <key> -q <query>
 ```
-Replace `<database_name>` with the database you want to access, `<query>` with the query you want to run in the database and `<key>` with a variable to store the result in Memcached.
+Replace `<database_name>` with the database you want to access, `<query>` with the query you want to run in the database and `<key>` with a variable to store the result of query in Memcached.
 
 When the script is executed for the first time, the data is loaded from the MySQL database and stored on the Memcached server.
 
