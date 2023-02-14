@@ -327,6 +327,6 @@ To retrieve data from Memcached through Telnet:
 ```console
 get <key>
 ```
-**NOTE:-** Key is the variable in which we store the data. In the above python script, we are storing the data from table1 and table2 in `output` and `output1` respectively.
+**NOTE:-** Key is the variable in which we store the data. In the above command, we are storing the data from table1 and table2 in `AA` and `BB` respectively.
 
 ![telnetfinalfinal](https://user-images.githubusercontent.com/71631645/218663147-8a7e0d6f-39d5-4b2e-9487-501d3ffbf40b.jpg)
