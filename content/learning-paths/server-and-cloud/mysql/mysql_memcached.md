@@ -245,7 +245,7 @@ Here is the output after the successful execution of the `ansible-playbook` comm
 ![ansible-end-final](https://user-images.githubusercontent.com/71631645/217766981-3e00b3f6-6ba8-47eb-9c8d-fefcd1685e36.jpg)
 
 ## Deploy Memcached as a cache for MySQL using Python
-We create two `.py` files on the host machine to deploy Memcached as a MySQL cache using Python: values.py and mem.py.  
+We create two `.py` files on the host machine to deploy Memcached as a MySQL cache using Python: **values.py** and **mem.py**.  
 
 **values.py** to store the IP addresses of the instances and the databases created in them.
 ```console
@@ -254,7 +254,7 @@ MYSQL_TEST=[["{{public_ip of MYSQL_TEST[0]}}", "arm_test1"],
 ```
 We are using the `arm_test1` and `arm_test2` databases created above through Ansible-Playbook. Replace `{{public_ip of MYSQL_TEST[0]}}` & `{{public_ip of MYSQL_TEST[1]}}` with the public IPs generated in the **inventory.txt** file after running the Terraform commands.       
 
-**mem.py** to access data from the instances and store it in Memcached.
+**mem.py** to access data from Memcached and, if not present, store it in the Memcached        
 ```console
 import sys
 import MySQLdb
