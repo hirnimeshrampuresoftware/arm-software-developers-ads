@@ -119,7 +119,7 @@ To deploy the instances, we need to initialize Terraform, generate an execution 
 
 ## Configure MySQL through Ansible
 To run Ansible, we have to create a `.yml` file, which is also known as `Ansible-Playbook`. Playbook contains a collection of tasks.       
-Here is the complete YML file for Ansible-Playbook for both instances.      
+Here is the complete YML file for Ansible-Playbook for both instances. This Playbook installs & enables MySQL in the instances and creates databases & tables inside them.  
 
 ```console
 ---
@@ -228,7 +228,7 @@ Here is the complete YML file for Ansible-Playbook for both instances.
         state: restarted
 ```
 
-**NOTE:-** We are using [table1.sql](https://github.com/hirnimeshrampuresoftware/arm-software-developers-ads/files/10681894/table1_dot_sql.txt) and [table2.sql](https://github.com/hirnimeshrampuresoftware/arm-software-developers-ads/files/10681895/table2_dot_sql.txt)
+**NOTE:-** We are using [table1.sql](https://github.com/hirnimeshrampuresoftware/arm-software-developers-ads/files/10729309/table1.txt) and [table2.sql](https://github.com/hirnimeshrampuresoftware/arm-software-developers-ads/files/10729310/table2.txt)
  script file to dump data. Specify the path of the files accordingly. Replace `{{Your_mysql_password}}` and `{{Give_any_password}}` with your own password.
 
 ### Ansible Commands
@@ -245,92 +245,78 @@ Here is the output after the successful execution of the `ansible-playbook` comm
 ![ansible-end-final](https://user-images.githubusercontent.com/71631645/217766981-3e00b3f6-6ba8-47eb-9c8d-fefcd1685e36.jpg)
 
 ## Deploy Memcached as a cache for MySQL using Python
-To deploy Memcached as a cache for MySQL using Python, create the following **mem1.py** and **mem2.py** files on the host machine to store data from each of the MySQL instances.     
-**mem1.py** file for MYSQL_TEST[0]:
+We create two `.py` files on the host machine to deploy Memcached as a MySQL cache using Python: values.py and mem.py           
+**values.py** to store the IP addresses of the instances and the databases created in them.
+```console
+MYSQL_TEST=[["{{public_ip of MYSQL_TEST[0]}}", "arm_test1"],
+["{{public_ip of MYSQL_TEST[1]}}", "arm_test2"]]
+```
+We are using the `arm_test1` and `arm_test2` databases created above through Ansible-Playbook. Replace `{{public_ip of MYSQL_TEST[0]}}` & `{{public_ip of MYSQL_TEST[1]}}` with the public IPs generated in the **inventory.txt** file after running the Terraform commands.       
+
+**mem.py** to access data from the instances and store it in Memcached.
 ```console
 import sys
 import MySQLdb
 import pymemcache
+from values import *
 from ast import literal_eval
+import argparse
+parser = argparse.ArgumentParser()
+
+parser.add_argument("-db", "--database", help="Database")
+parser.add_argument("-k", "--key", help="Key")
+parser.add_argument("-q", "--query", help="Query")
+args = parser.parse_args()
 
 memc = pymemcache.Client("127.0.0.1:11211");
 
-try:
-    conn = MySQLdb.connect (host = "{{public_ip of MYSQL_TEST[0]}}",
-                            user = "{{Your_database_user}}",
-                            passwd = "{{Your_database_password}}",
-                            db = "arm_test1")
-except MySQLdb.Error as e:
-     print ("Error %d: %s" % (e.args[0], e.args[1]))
-     sys.exit (1)
+for i in range(0,2):
+    if (MYSQL_TEST[i][1]==args.database):
+        try:
+            conn = MySQLdb.connect (host = MYSQL_TEST[i][0],
+                                    user = "{{Your_database_user}}",
+                                    passwd = "{{Your_database_password}}",
+                                    db = MYSQL_TEST[i][1])
+        except MySQLdb.Error as e:
+             print ("Error %d: %s" % (e.args[0], e.args[1]))
+             sys.exit (1)
 
-userdata = memc.get('output')
+        sqldata = memc.get(args.key)
 
-if not userdata:
-    cursor = conn.cursor()
-    cursor.execute('select user_id, username from user_details order by user_id desc limit 5')
-    rows = cursor.fetchall()
-    # store the result in the Memcached with an expiry time of 120 seconds
-    memc.set('output',rows,120)
-    print ("Updated Memcached with MySQL data")
-    for x in rows:
-        print(x)
+        if not sqldata:
+            cursor = conn.cursor()
+            cursor.execute(args.query)
+            rows = cursor.fetchall()
+            memc.set(args.key,rows,60)
+            print ("Updated memcached with MySQL data")
+            for x in rows:
+                print(x)
+        else:
+            print ("Loaded data from memcached")
+            data = tuple(literal_eval(sqldata.decode("utf-8")))
+            for row in data:
+                print (f"{row[0]},{row[1]}")
+        break
 else:
-    print ("Loaded data from Memcached")
-    data = tuple(literal_eval(userdata.decode("utf-8")))
-    for row in data:
-        print (f"{row[0]},{row[1]}")
+    print("this database doesn't exist")            
 ```
-
-**mem2.py** file for MYSQL_TEST[1]:
-```console
-import sys
-import MySQLdb
-import pymemcache
-from ast import literal_eval
-
-memc = pymemcache.Client("127.0.0.1:11211");
-
-try:
-    conn = MySQLdb.connect (host = "{{public_ip of MYSQL_TEST[1]}}",
-                            user = "{{Your_database_user}}",
-                            passwd = "{{Your_database_password}}",
-                            db = "arm_test2")
-except MySQLdb.Error as e:
-     print ("Error %d: %s" % (e.args[0], e.args[1]))
-     sys.exit (1)
-
-filmdata = memc.get('output1')
-
-if not filmdata:
-    cursor = conn.cursor()
-    cursor.execute('select movie_id, title from movie order by movie_id desc limit 5')
-    rows = cursor.fetchall()
-    memc.set('output1',rows,120)
-    print ("Updated Memcached with MySQL data")
-    for x in rows:
-        print(x)
-else:
-    print ("Loaded data from Memcached")
-    data = tuple(literal_eval(filmdata.decode("utf-8")))
-    for row in data:
-        print (f"{row[0]},{row[1]}")
-```
-We are using the `arm_test1` and `arm_test2` databases created above through Ansible-Playbook. Replace `{{Your_database_user}}` and `{{Your_database_password}}` with the database user and password created through Ansible-Playbook, and `{{public_ip of MYSQL_TEST[0]}}` and `{{public_ip of MYSQL_TEST[1]}}` with the public IPs generated in the **inventory.txt** file after running the Terraform commands.    
+Replace `{{Your_database_user}}` & `{{Your_database_password}}` with the database user and password created through Ansible-Playbook.   
 
 To execute the script, run the following command:
 ```console
-python3 <filename.py>
+python3 mem.py -db <database_name> -k <key> -q <query>
 ```
+Replace `<database_name>` with the database you want to access, `<query>` with the query you want to run in the database and `<key>` with a variable to store the result in Memcached.
+
 When the script is executed for the first time, the data is loaded from the MySQL database and stored on the Memcached server.
 
-![mem1](https://user-images.githubusercontent.com/71631645/217153567-bc8748ae-b963-4e00-ac2f-9c5319e70c2f.jpg)
-![mem2](https://user-images.githubusercontent.com/71631645/217151671-b4c46cee-3888-4b51-9cd0-350be25f4f6e.jpg)
+![memupdate1](https://user-images.githubusercontent.com/71631645/218663086-19fec362-7360-4622-bd1c-cdb2389799dc.jpg)
+![memupdate2](https://user-images.githubusercontent.com/71631645/218663093-75c6033a-7feb-4326-ba55-3f5d3df03d82.jpg)
 
 When executed after that, it loads the data from Memcached. In the example above, the information stored in Memcached is in the form of rows from a Python DB cursor. When accessing the information (within the 120 second expiry time), the data is loaded from Memcached and dumped.
 
-![mem1load](https://user-images.githubusercontent.com/71631645/217153599-9d963f94-61f3-41a5-87e2-07dd849b7511.jpg)                         
-![mem12load](https://user-images.githubusercontent.com/71631645/217153604-301a9201-1bab-4728-a724-0e2558a627bf.jpg)           
+![memload1](https://user-images.githubusercontent.com/71631645/218662938-f62ec905-89ea-4c6d-ac90-f505a75eca31.jpg)
+![memload2](https://user-images.githubusercontent.com/71631645/218662947-27e52617-eb9e-4cda-a2ad-b94a85709605.jpg)           
 
 ### Memcached Telnet Commands
 To verify that the MySQL query is getting stored in Memcached, connect to the Memcached server with Telnet and start a session:
@@ -343,4 +329,4 @@ get <key>
 ```
 **NOTE:-** Key is the variable in which we store the data. In the above python script, we are storing the data from table1 and table2 in `output` and `output1` respectively.
 
-![telnet](https://user-images.githubusercontent.com/71631645/217169140-6693c2c0-4cd7-4cfb-9ae3-ded0d11778f0.jpg)
+![telnetfinalfinal](https://user-images.githubusercontent.com/71631645/218663147-8a7e0d6f-39d5-4b2e-9487-501d3ffbf40b.jpg)
