@@ -32,7 +32,7 @@ Following is the flowchart showing the general sequence for using Memcached:
 
 ### Generate Access keys (access key ID and secret access key)
 The installation of Terraform on your desktop or laptop needs to communicate with AWS. Thus, Terraform needs to be able to authenticate with AWS. For authentication, generate access keys (access key ID and secret access key). These access keys are used by Terraform for making programmatic calls to AWS via the AWS CLI.
-To generate an access key and secret key, follow this [documentation](https://github.com/zachlas/arm-software-developers-ads/blob/main/content/learning-paths/server-and-cloud/mysql/ec2_deployment.md#generate-access-keys-access-key-id-and-secret-access-key).
+To generate an access key and secret key, follow this [documentation](/content/learning-paths/server-and-cloud/mysql/ec2_deployment.md#generate-access-keys-access-key-id-and-secret-access-key).
 
 ### Generate key-pair (public key, private key)
 Before using Terraform, first generate the key-pair (public key and private key) using ssh-keygen. Then associate both public and private keys with AWS EC2 instances. To generate the key-pair, follow this [documentation](/content/learning-paths/server-and-cloud/mysql/ec2_deployment.md#generate-key-pairpublic-key-private-key-using-ssh-keygen).
@@ -115,10 +115,10 @@ resource "aws_key_pair" "deployer" {
 **NOTE:-** Replace `public_key`, `access_key`, `secret_key`, and `key_name` with respective values. The Terraform commands will automatically generate the **inventory.txt** file on the path provided in the filename. Specify the path accordingly.
 
 ### Terraform Commands
-To deploy the instances, we need to initialize Terraform, generate an execution plan and apply the execution plan to our cloud infrastructure. Follow this [documentation](content/learning-paths/server-and-cloud/mysql/ec2_deployment.md#terraform-commands) to deploy the **main.tf** file.
+To deploy the instances, we need to initialize Terraform, generate an execution plan and apply the execution plan to our cloud infrastructure. Follow this [documentation](/content/learning-paths/server-and-cloud/mysql/ec2_deployment.md#terraform-commands) to deploy the **main.tf** file.
 
 ## Configure MySQL through Ansible
-To run Ansible, we have to create a `.yml` file, which is also known as `Ansible-Playbook`. Playbook contains a collection of tasks.       
+To run Ansible, we have to create a `.yml` file, which is also known as an `Ansible-Playbook`. The Playbook contains a collection of tasks.            
 Here is the complete YML file for Ansible-Playbook for both instances. This Playbook installs & enables MySQL in the instances and creates databases & tables inside them.  
 
 ```console
@@ -211,8 +211,8 @@ Here is the complete YML file for Ansible-Playbook for both instances. This Play
            'Remove test database': 'y'
            'Reload privilege tables now': 'y'
         timeout: 1
-      register: secure_mariadb
-      failed_when: "'... Failed!' in secure_mariadb.stdout_lines"
+      register: secure_mysql
+      failed_when: "'... Failed!' in secure_mysql.stdout_lines"
     - name: Enable remote login by changing bind-address
       lineinfile:
          path: /etc/mysql/mysql.conf.d/mysqld.cnf
@@ -229,7 +229,7 @@ Here is the complete YML file for Ansible-Playbook for both instances. This Play
 ```
 
 **NOTE:-** We are using [table1.sql](https://github.com/hirnimeshrampuresoftware/arm-software-developers-ads/files/10729309/table1.txt) and [table2.sql](https://github.com/hirnimeshrampuresoftware/arm-software-developers-ads/files/10729310/table2.txt)
- script file to dump data. Specify the path of the files accordingly. Replace `{{Your_mysql_password}}` and `{{Give_any_password}}` with your own password.
+ script file to dump data in `MYSQL_TEST[0]` AND `MYSQL_TEST[1]` instances respectively. Specify the path of the files accordingly. Replace `{{Your_mysql_password}}` and `{{Give_any_password}}` with your own password.
 
 ### Ansible Commands
 To run a Playbook, we need to use the `ansible-playbook` command.
@@ -245,9 +245,9 @@ Here is the output after the successful execution of the `ansible-playbook` comm
 ![ansible-end-final](https://user-images.githubusercontent.com/71631645/217766981-3e00b3f6-6ba8-47eb-9c8d-fefcd1685e36.jpg)
 
 ## Deploy Memcached as a cache for MySQL using Python
-We create two `.py` files on the host machine to deploy Memcached as a MySQL cache using Python: values.py and mem.py  
+We create two `.py` files on the host machine to deploy Memcached as a MySQL cache using Python: values.py and mem.py.  
 
-**values.py** to store the IP addresses of the instances and the database created in them.
+**values.py** to store the IP addresses of the instances and the databases created in them.
 ```console
 MYSQL_TEST=[["{{public_ip of MYSQL_TEST[0]}}", "arm_test1"],
 ["{{public_ip of MYSQL_TEST[1]}}", "arm_test2"]]
@@ -288,7 +288,7 @@ for i in range(0,2):
             cursor = conn.cursor()
             cursor.execute(args.query)
             rows = cursor.fetchall()
-            memc.set(args.key,rows,60)
+            memc.set(args.key,rows,120)
             print ("Updated memcached with MySQL data")
             for x in rows:
                 print(x)
@@ -307,7 +307,7 @@ To execute the script, run the following command:
 ```console
 python3 mem.py -db <database_name> -k <key> -q <query>
 ```
-Replace `<database_name>` with the database you want to access, `<query>` with the query you want to run in the database and `<key>` with a variable to store the result of query in Memcached.
+Replace `<database_name>` with the database you want to access, `<query>` with the query you want to run in the database and `<key>` with a variable to store the result of the query in Memcached.
 
 When the script is executed for the first time, the data is loaded from the MySQL database and stored on the Memcached server.
 
