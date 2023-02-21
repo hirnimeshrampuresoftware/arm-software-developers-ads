@@ -12,106 +12,69 @@ layout: "learningpathall"
 
 ## Prerequisites
 
-* [An AWS account](https://portal.aws.amazon.com/billing/signup?nc2=h_ct&src=default&redirect_url=https%3A%2F%2Faws.amazon.com%2Fregistration-confirmation#/start)
-* [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+* An Azure portal account
+* [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=apt)
 * [Ansible](https://www.cyberciti.biz/faq/how-to-install-and-configure-latest-version-of-ansible-on-ubuntu-linux/)
 * [Terraform](https://developer.hashicorp.com/terraform/cli/install/apt)
 * [Python](https://beebom.com/how-install-python-ubuntu-linux/)
 * [Memcached](https://github.com/memcached/memcached/wiki/Install)
 * [Telnet](https://adamtheautomator.com/linux-to-install-telnet/)
 
-## Using MySQL with Memcached
-**Memcached** is a simple, highly scalable key-based cache that stores data and objects wherever dedicated or spare RAM is available for quick access by applications without going through layers of parsing or disk I/O.
-When using Memcached to cache MySQL data, your application must retrieve data from the database and load the appropriate key-value pairs into the cache. Then, subsequent lookups can be done directly from the cache.
-
-Following is the flowchart showing the general sequence for using Memcached:
-
-![flowchart](https://user-images.githubusercontent.com/71631645/212881442-2afcbb74-150a-4997-bd7f-3bca24c94255.jpg)
-
 ## Deploy MySQL instances via Terraform
 
-### Generate Access keys (access key ID and secret access key)
-The installation of Terraform on your desktop or laptop needs to communicate with AWS. Thus, Terraform needs to be able to authenticate with AWS. For authentication, generate access keys (access key ID and secret access key). These access keys are used by Terraform for making programmatic calls to AWS via the AWS CLI.
-To generate an access key and secret key, follow this [documentation](/content/learning-paths/server-and-cloud/mysql/ec2_deployment.md#generate-access-keys-access-key-id-and-secret-access-key).
+### Azure authentication
+The installation of Terraform on your Desktop/Laptop needs to communicate with Azure. Thus, Terraform needs to be authenticated.
+For authentication, follow this [documentation](/content/learning-paths/server-and-cloud/azure/terraform.md#azure-authentication).
 
 ### Generate key-pair (public key, private key)
-Before using Terraform, first generate the key-pair (public key and private key) using ssh-keygen. Then associate both public and private keys with AWS EC2 instances. To generate the key-pair, follow this [documentation](/content/learning-paths/server-and-cloud/mysql/ec2_deployment.md#generate-key-pairpublic-key-private-key-using-ssh-keygen).
+Before using Terraform, first generate the key-pair (public key and private key) using ssh-keygen. Then associate both public and private keys with AWS EC2 instances. To generate the key-pair, follow this [documentation](/content/learning-paths/server-and-cloud/azure/terraform.md#generate-key-pair-public-key-private-key-using-ssh-keygen).
 
-### Create Terraform file (main.tf)
-After generating the keys, we have to create the MySQL instances. Then we will push our public key to the **authorized_keys** folder in **~/.ssh**. We will also create a security group that opens inbound ports `22` (ssh) and `3306` (MySQL). Below is a Terraform file called **main.tf** that will do this for us. Here we are creating 2 instances.
+### Create Terraform files
+After generating the keys, we have to create the MySQL instances. We will also create a security group that opens inbound ports `22` (ssh) and `3306` (MySQL). The Terraform configuration is broken into three files: **providers.tf**, **variables.tf** and **main.tf**.
+
+Add the following code in **providers.tf** file to configure Terraform to communicate with Azure:
     
 ```console
-provider "aws" {
-  region = "us-east-2"
-  access_key  = "AXXXXXXXXXXXXXXXXXXX"
-  secret_key   = "AXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-}
-  resource "aws_instance" "MYSQL_TEST" {
-  count         = "2"
-  ami           = "ami-064593a301006939b"
-  instance_type = "t4g.small"
-  security_groups= [aws_security_group.Terraformsecurity1.name]
-  key_name = "mysql_h"
-  tags = {
-    Name = "MYSQL_TEST"
-  }
+terraform {
+  required_version = ">=0.12"
 
-resource "aws_default_vpc" "main" {
-  tags = {
-    Name = "main"
+  required_providers {
+    azurerm = {
+      source= "hashicorp/azurerm"
+      version = "~>2.0"
+    }
+    random = {
+      source= "hashicorp/random"
+      version = "~>3.0"
+    }
+    tls = {
+    source = "hashicorp/tls"
+    version = "~>4.0"
+    }
   }
 }
-resource "aws_security_group" "Terraformsecurity1" {
-  name        = "Terraformsecurity1"
-  description = "Allow TLS inbound traffic"
-  vpc_id      = aws_default_vpc.main.id
 
-  ingress {
-    description      = "TLS from VPC"
-    from_port        = 3306
-    to_port          = 3306
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
+provider "azurerm" {
+  features {}
 }
-  ingress {
-    description      = "TLS from VPC"
-    from_port        = 22
-    to_port          = 22
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-  }
-  egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "Terraformsecurity1"
-  }
-
- }
-resource "local_file" "inventory" {
-    depends_on=[aws_instance.MYSQL_TEST]
-    filename = "/path/to/inventory/inventory.txt"
-    content = <<EOF
-[mysql1]
-${aws_instance.MYSQL_TEST[0].public_ip}
-[mysql2]
-${aws_instance.MYSQL_TEST[1].public_ip}
-[all:vars]
-ansible_connection=ssh
-ansible_user=ubuntu
-                EOF
-}
-
-resource "aws_key_pair" "deployer" {
-        key_name   = "mysql_h"
-        public_key = "ssh-rsaxxxxxxxxxxxxxxx"
-} 
     
 ```
+Create a **variables.tf** file for describing the variables referenced in the other files with their type and a default value.
+```console
+variable "resource_group_location" {
+  default = "eastus2"
+  description = "Location of the resource group."
+}
+
+variable "resource_group_name_prefix" {
+  default = "rg"
+  description = "Prefix of the resource group name that's combined with a random ID so name is unique in your Azure subscription."
+}
+```
+Add the resources required to create a virtual machine in main.tf.
+```console
+
+
 **NOTE:-** Replace `public_key`, `access_key`, `secret_key`, and `key_name` with respective values. The Terraform commands will automatically generate the **inventory.txt** file on the path provided in the filename. Specify the path accordingly.
 
 ### Terraform Commands
