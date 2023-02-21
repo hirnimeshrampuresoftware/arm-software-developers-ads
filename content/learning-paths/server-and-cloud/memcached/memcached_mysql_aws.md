@@ -1,32 +1,26 @@
 ---
 # User change
-title: "Deploy Memcached as a cache for MySQL"
+title: "Deploy Memcached as a cache for MySQL on Azure Arm based Instance"
 
-weight: 3 # 1 is first, 2 is second, etc.
+weight: 4 # 1 is first, 2 is second, etc.
 
 # Do not modify these elements
 layout: "learningpathall"
 ---
 
-##  Deploy Memcached as a cache for MySQL 
+## Before you begin
 
-## Prerequisites
+Any computer which has the required tools installed can be used for this section. 
 
-* [An AWS account](https://portal.aws.amazon.com/billing/signup?nc2=h_ct&src=default&redirect_url=https%3A%2F%2Faws.amazon.com%2Fregistration-confirmation#/start)
+You will need [an AWS account](https://portal.aws.amazon.com/billing/signup?nc2=h_ct&src=default&redirect_url=https%3A%2F%2Faws.amazon.com%2Fregistration-confirmation#/start). Create an account if needed.
+
+Following tools are required on the computer you are using. Follow the links to install the required tools.
 * [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
 * [Ansible](https://www.cyberciti.biz/faq/how-to-install-and-configure-latest-version-of-ansible-on-ubuntu-linux/)
 * [Terraform](https://developer.hashicorp.com/terraform/cli/install/apt)
 * [Python](https://beebom.com/how-install-python-ubuntu-linux/)
 * [Memcached](https://github.com/memcached/memcached/wiki/Install)
 * [Telnet](https://adamtheautomator.com/linux-to-install-telnet/)
-
-## Using MySQL with Memcached
-**Memcached** is a simple, highly scalable key-based cache that stores data and objects wherever dedicated or spare RAM is available for quick access by applications without going through layers of parsing or disk I/O.
-When using Memcached to cache MySQL data, your application must retrieve data from the database and load the appropriate key-value pairs into the cache. Then, subsequent lookups can be done directly from the cache.
-
-Following is the flowchart showing the general sequence for using Memcached:
-
-![flowchart](https://user-images.githubusercontent.com/71631645/212881442-2afcbb74-150a-4997-bd7f-3bca24c94255.jpg)
 
 ## Deploy MySQL instances via Terraform
 
