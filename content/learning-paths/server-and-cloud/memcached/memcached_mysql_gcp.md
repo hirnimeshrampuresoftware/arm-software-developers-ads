@@ -46,7 +46,7 @@ resource "google_compute_project_metadata_item" "ssh-keys" {
 }
 
 resource "google_compute_instance" "MYSQL_TEST" {
-  name         = "MYSQL_TEST-${count.index+1}"
+  name         = "mysqltest-${count.index+1}"
   count        = "2"
   machine_type = "t2a-standard-1"
 
