@@ -8,7 +8,7 @@ minutes_to_complete: 60
 who_is_this_for: Developers new to Redis
 
 learning_objectives: 
-    - Redis deployment configurations
+    - Understand Redis deployment configurations
     - Install Redis on a single AWS Arm based instance
     - Install Redis on a single Azure Arm based instance
     - Install Redis on a single GCP Arm based instance
