@@ -28,7 +28,7 @@ To connect to the remote Redis server, we need to use Redis Client (`redis-cli`)
 - `-p` option providing the port number.  
 
 ## Multi-node configuration
-A Redis multi-node cluster requires 3 master and 3 slave nodes in minimal configuration to work properly.  
+A Redis multi-node cluster requires 3 primary and 3 replica nodes in minimal configuration to work properly.  
 
 We can use 6 different ports of the same host as follows:
 ```console
