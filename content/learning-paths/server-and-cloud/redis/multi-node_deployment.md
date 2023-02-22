@@ -88,7 +88,7 @@ resource "aws_key_pair" "deployer" {
 To deploy the instances, we need to initialize Terraform, generate an execution plan and apply the execution plan to our cloud infrastructure. Follow this [documentation](/content/learning-paths/server-and-cloud/redis/aws_deployment.md#terraform-commands) to deploy the **main.tf** file.
 
 ## Install Redis in a multi-node configuration using Ansible
-To run Ansible, we have to create a `.yml` file, which is also known as `Ansible-Playbook`. The following playbook contains a collection of tasks which install Redis in multi-node configuration (3 master and 3 slave nodes). In our example, we have used 6 different ports (`6001-6006`) of the same host. 
+To run Ansible, we have to create a `.yml` file, which is also known as `Ansible-Playbook`. The following playbook contains a collection of tasks which install Redis in multi-node configuration (3 primary and 3 replica nodes). In our example, we have used 6 different ports (`6001-6006`) of the same host. 
 
 Here is the complete **deploy_redis.yml** file of Ansible-Playbook
 ```console
@@ -136,12 +136,12 @@ Here is the complete **deploy_redis.yml** file of Ansible-Playbook
         chdir: "/home/ubuntu/{{item}}"
       with_sequence: start=6001 end=6006
       become_user: ubuntu
-    - name: Create Redis cluster with 3 master and 3 slave nodes
+    - name: Create Redis cluster with 3 primary and 3 replica nodes
       shell: "(redis-cli --cluster create {{ansible_host}}:6001 {{ansible_host}}:6002 {{ansible_host}}:6003 {{ansible_host}}:6004 {{ansible_host}}:6005 {{ansible_host}}:6006 --cluster-replicas 1 --cluster-yes &>/dev/null &)"
       run_once: true
       become_user: ubuntu
 ```
-**NOTE:-** Since the allocation of master and slave nodes is random at the time of cluster creation, it is difficult to know whether the nodes at ports `6001-6006` are master or slave nodes. Hence, for the multi-node configuration, we need to turn off **protected-mode**, which is enabled by default, so that we can connect to master and slave nodes. 
+**NOTE:-** Since the allocation of primary and replica nodes is random at the time of cluster creation, it is difficult to know whether the nodes at ports `6001-6006` are master or slave nodes. Hence, for the multi-node configuration, we need to turn off **protected-mode**, which is enabled by default, so that we can connect to primary and replica nodes. 
 
 To run a Playbook, we need to use the `ansible-playbook` command.
 ```console
@@ -162,6 +162,6 @@ We can connect to remote Redis cluster from local machine using:
 ```console
 redis-cli -c -h {ansible_host} -p {port}
 ```
-**Note:-** Get value of `{ansible_host}` from **inventory.txt** file and replace `{port}` with its respective value. The `redis-cli` will run in interactive mode. We can connect to any port from 6001 to 6006, the command will get redirected to master node. Before running any other command, we need to authorize redis with `{password}` set by us in ansible `.yml` file
+**Note:-** Get value of `{ansible_host}` from **inventory.txt** file and replace `{port}` with its respective value. The `redis-cli` will run in interactive mode. We can connect to any port from 6001 to 6006, the command will get redirected to primary node. Before running any other command, we need to authorize redis with `{password}` set by us in ansible `.yml` file
 
 ![image](https://user-images.githubusercontent.com/90673309/215739986-33c378a5-2a35-474c-a621-c292d1e7b357.png)
