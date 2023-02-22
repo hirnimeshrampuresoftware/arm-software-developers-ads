@@ -43,13 +43,13 @@ review:
             
     - questions:
         question: >
-            Redis Cluster requires minimum 6 master nodes to work properly. 
+            Redis Cluster requires minimum 6 primary nodes to work properly. 
         answers:
             - "True"
             - "False"
         correct_answer: 2                     
         explanation: >
-            Redis Cluster requires minimum 3 master nodes to work properly.
+            Redis Cluster requires minimum 3 primary nodes to work properly.
 
 # ================================================================================
 #       FIXED, DO NOT MODIFY
