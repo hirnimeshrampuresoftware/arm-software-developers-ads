@@ -55,7 +55,7 @@ Output when a `key-pair` is generated:
 
 ## Deploy AWS Arm based instance via Terraform
 
-After generating the public and private keys, we need to create an AWS Arm based instance. Then we will push our public key to the **authorized_keys** folder in `~/.ssh`. We will also create a security group that opens inbound ports `22`(ssh) and `6000`(Redis). Below is a Terraform file named **main.tf** which will do this for us.
+After generating the public and private keys, we need to create an AWS Arm based instance. Then we will push our public key to the **authorized_keys** folder in `~/.ssh`. We will also create a security group that opens inbound ports `22`(ssh) and `6379`(Redis). Below is a Terraform file named **main.tf** which will do this for us.
 
 
 ```console
@@ -77,8 +77,8 @@ resource "aws_security_group" "main" {
 
   ingress {
     description      = "Open redis connection port"
-    from_port        = 6000
-    to_port          = 6000
+    from_port        = 6379
+    to_port          = 6379
     protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
   }
@@ -112,7 +112,7 @@ resource "aws_key_pair" "deployer" {
         public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCUZXm6T6JTQBuxw7aFaH6gmxDnjSOnHbrI59nf+YCHPqIHMlGaxWw0/xlaJiJynjOt67Zjeu1wNPifh2tzdN3UUD7eUFSGcLQaCFBDorDzfZpz4wLDguRuOngnXw+2Z3Iihy2rCH+5CIP2nCBZ+LuZuZ0oUd9rbGy6pb2gLmF89GYzs2RGG+bFaRR/3n3zR5ehgCYzJjFGzI8HrvyBlFFDgLqvI2KwcHwU2iHjjhAt54XzJ1oqevRGBiET/8RVsLNu+6UCHW6HE9r+T5yQZH50nYkSl/QKlxBj0tGHXAahhOBpk0ukwUlfbGcK6SVXmqtZaOuMNlNvssbocdg1KwOH ubuntu@ip-172-31-XXXX-XXXX"
 }
 ```
-**NOTE:-** Replace `public_key`, `access_key`, `secret_key`, and `key_name` with respective values. In our example, we have used port number `6000`.
+**NOTE:-** Replace `public_key`, `access_key`, `secret_key`, and `key_name` with respective values.
 
 Now, use the below Terraform commands to deploy the **main.tf** file.
 
@@ -175,11 +175,31 @@ Here is the complete **deploy_redis.yml** file of Ansible-Playbook
       shell: apt update
     - name: Install redis
       shell: apt install -y redis-tools redis
-    - name: Start redis server
-      shell: redis-server --port 6000 --daemonize yes
+    - name: Create directories
+      file:
+        path: "/home/ubuntu/redis"
+        state: directory
+      become_user: ubuntu
+    - name: Create configuration files
+      copy:
+        dest: "/home/ubuntu/redis/redis.conf"
+        content: |
+          bind 0.0.0.0
+          port 6379
+          protected-mode yes
+          cluster-enabled yes
+          daemonize yes
+          appendonly no
+      become_user: ubuntu
+    - name: Stop redis-server
+      shell: service redis-server stop
+    - name: Start redis server with configuration files
+      shell: redis-server redis.conf
+      args:
+        chdir: "/home/ubuntu/redis"
       become_user: ubuntu
     - name: Set Authentication password
-      shell: redis-cli -p 6000 CONFIG SET requirepass "{password}"
+      shell: redis-cli -p 6379 CONFIG SET requirepass "{password}"
       become_user: ubuntu
 ```
 **NOTE:-** Replace `{password}` with respective value.
