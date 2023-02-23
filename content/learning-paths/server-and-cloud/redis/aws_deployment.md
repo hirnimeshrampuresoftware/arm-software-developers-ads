@@ -225,9 +225,6 @@ redis-cli -h {ansible_host} -p {port}
 **NOTE:-** Get value of `{ansible_host}` from **inventory.txt** file and replace `{port}` with its respective value. 
 
 The `redis-cli` will run in interactive mode. Before running any command, we need to authorize Redis with the `{password}` set by us in **deploy_redis.yml** file.
+Otherwise, we will keep getting errors on running any command.
 
-![image](https://user-images.githubusercontent.com/90673309/218445081-887397bb-ef1c-4a6d-83d3-1c01082bbf1b.png)
-
-Otherwise, we will keep getting errors on running any command unless we authorize Redis with the `{password}` set by us in **deploy_redis.yml** file.
-
-![image](https://user-images.githubusercontent.com/90673309/218445059-93214b5e-d795-4882-ad3f-136f0dbe6081.png)
+![redis-cli](https://user-images.githubusercontent.com/71631645/220876727-d04eab2c-3829-409a-86b2-5af91ee95661.jpg)
