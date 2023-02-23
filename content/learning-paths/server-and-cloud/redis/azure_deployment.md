@@ -126,7 +126,7 @@ resource "azurerm_network_security_group" "my_terraform_nsg" {
     access = "Allow"
     protocol= "Tcp"
     source_port_range= "*"
-    destination_port_range = "6000"
+    destination_port_range = "6379"
     source_address_prefix= "*"
     destination_address_prefix = "*"
   }
@@ -257,11 +257,31 @@ Here is the complete **deploy_redis.yml** file of Ansible-Playbook
       shell: apt update
     - name: Install redis
       shell: apt install -y redis-tools redis
-    - name: Start redis server
-      shell: redis-server --port 6000 --daemonize yes
+    - name: Create directories
+      file:
+        path: "/home/azureuser/redis"
+        state: directory
+      become_user: azureuser
+    - name: Create configuration files
+      copy:
+        dest: "/home/azureuser/redis/redis.conf"
+        content: |
+          bind 0.0.0.0
+          port 6379
+          protected-mode yes
+          cluster-enabled no
+          daemonize yes
+          appendonly no
+      become_user: azureuser
+    - name: Stop redis-server
+      shell: service redis-server stop
+    - name: Start redis server with configuration files
+      shell: redis-server redis.conf
+      args:
+        chdir: "/home/azureuser/redis"
       become_user: azureuser
     - name: Set Authentication password
-      shell: redis-cli -p 6000 CONFIG SET requirepass "{password}"
+      shell: redis-cli -p 6379 CONFIG SET requirepass "{password}"
       become_user: azureuser
 ```
 **NOTE:-** Replace `{password}` with respective value.
@@ -274,7 +294,7 @@ ansible-playbook {your_yml_file} -i {your_inventory_file} --key-file {path_to_pr
 
 Here is the output after the successful execution of the `ansible-playbook` command.
 
-![image](https://user-images.githubusercontent.com/90673309/219281218-703d2801-8669-4548-ac1e-fcdd71d5918b.png)
+![ansible-azure](https://user-images.githubusercontent.com/71631645/220894517-074dd813-578d-4354-b2d4-40ec7a1565e1.jpg)
 
 ## Connecting to Redis server from local machine
 
