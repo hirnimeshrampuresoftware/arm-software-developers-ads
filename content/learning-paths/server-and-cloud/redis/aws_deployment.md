@@ -212,8 +212,7 @@ ansible-playbook {your_yml_file} -i {your_inventory_file} --key-file {path_to_pr
 
 Here is the output after the successful execution of the `ansible-playbook` command.
 
-![image](https://user-images.githubusercontent.com/90673309/218444832-2a410339-ff0e-43ae-94d6-d5d54e8c3858.png)
-
+![ansible](https://user-images.githubusercontent.com/71631645/220877481-46f101da-6f84-494a-b38d-e56a4bec88fc.jpg)
 
 ## Connecting to Redis server from local machine
 
