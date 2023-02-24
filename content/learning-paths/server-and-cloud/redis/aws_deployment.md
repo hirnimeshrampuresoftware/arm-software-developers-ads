@@ -187,7 +187,7 @@ Here is the complete **deploy_redis.yml** file of Ansible-Playbook
           bind 0.0.0.0
           port 6379
           protected-mode yes
-          cluster-enabled yes
+          cluster-enabled no
           daemonize yes
           appendonly no
       become_user: ubuntu
