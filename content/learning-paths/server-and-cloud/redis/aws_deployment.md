@@ -216,8 +216,10 @@ Here is the output after the successful execution of the `ansible-playbook` comm
 
 ## Connecting to Redis server from local machine
 
-We can connect to remote Redis server from local machine using:
-
+We can connect to remote Redis server from local machine. We need to use redis-tools to interact with redis-server.
+```console
+apt install redis-tools
+```
 ```console
 redis-cli -h {ansible_host} -p {port}
 ```
