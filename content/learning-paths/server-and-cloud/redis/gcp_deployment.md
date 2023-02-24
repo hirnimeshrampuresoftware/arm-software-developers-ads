@@ -45,7 +45,7 @@ resource "google_compute_firewall" "rules" {
 
   allow {
     protocol  = "tcp"
-    ports     = ["6000"]
+    ports     = ["6379"]
   }
 }
 
