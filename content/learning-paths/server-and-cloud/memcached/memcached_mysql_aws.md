@@ -122,14 +122,12 @@ Here is the complete YML file for Ansible-Playbook for both instances. This Play
   become: true
 
   tasks:
-    - name: Update the Machine
-      shell: apt-get update -y
-    - name: Installing Mysql-Server
-      shell: apt-get -y install mysql-server
-    - name: Installing PIP for enabling MySQL Modules
-      shell: apt -y install python3-pip
-    - name: Installing Mysql dependencies
-      shell: pip3 install PyMySQL
+    - name: Update the Machine and Install dependencies
+      shell: |
+             apt-get update -y
+             apt-get -y install mysql-server
+             apt -y install python3-pip
+             pip3 install PyMySQL
     - name: start and enable mysql service
       service:
         name: mysql
