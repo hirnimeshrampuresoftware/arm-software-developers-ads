@@ -28,7 +28,7 @@ Following tools are required on the computer you are using. Follow the links to 
 To obtain user access credentials, follow this [documentation](/content/learning-paths/server-and-cloud/gcp/terraform.md#acquire-user-credentials).
 
 ### Generate key-pair (public key, private key)
-Before using Terraform, first generate the key-pair (public key and private key) using ssh-keygen. Then associate both public and private keys with Arm VMs.. To generate the key-pair, follow this [documentation](/content/learning-paths/server-and-cloud/gcp/terraform.md#generate-key-pairpublic-key-private-key-using-ssh-keygen).
+Before using Terraform, first generate the key-pair (public key and private key) using ssh-keygen. Then associate both public and private keys with Arm VMs. To generate the key-pair, follow this [documentation](/content/learning-paths/server-and-cloud/gcp/terraform.md#generate-key-pairpublic-key-private-key-using-ssh-keygen).
 
 ### Create Terraform file (main.tf)
 After generating the keys, we have to create the MySQL instances. Then we will push our public key to the authorized_keys folder in ~/.ssh. We will also create a security group that opens inbound ports `22` (ssh) and `3306` (MySQL). Below is a Terraform file called main.tf that will do this for us. Here we are creating 2 instances.
@@ -102,131 +102,7 @@ ansible_user=ubuntu
 To deploy the instances, we need to initialize Terraform, generate an execution plan and apply the execution plan to our cloud infrastructure. Follow this [documentation](/content/learning-paths/server-and-cloud/mysql/ec2_deployment.md#terraform-commands) to deploy the **main.tf** file.
 
 ## Configure MySQL through Ansible
-To run Ansible, we have to create a `.yml` file, which is also known as an `Ansible-Playbook`. The Playbook contains a collection of tasks.            
-Here is the complete YML file for Ansible-Playbook for both instances. This Playbook installs & enables MySQL in the instances and creates databases & tables inside them.  
-
-```console
----
-- hosts: mysql1, mysql2
-  remote_user: root
-  become: true
-
-  tasks:
-    - name: Update the Machine
-      shell: apt-get update -y
-    - name: Installing Mysql-Server
-      shell: apt-get -y install mysql-server
-    - name: Installing PIP for enabling MySQL Modules
-      shell: apt -y install python3-pip
-    - name: Installing Mysql dependencies
-      shell: pip3 install PyMySQL
-    - name: start and enable mysql service
-      service:
-        name: mysql
-        state: started
-        enabled: yes
-    - name: Change Root Password
-      shell: sudo mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '{{Your_mysql_password}}'"
-    - name: Create database user with password and all database privileges and 'WITH GRANT OPTION'
-      mysql_user:
-         login_user: root
-         login_password: {{Your_mysql_password}}
-         login_host: localhost
-         name: Local_user
-         host: '%'
-         password: {{Give_any_password}}
-         priv: '*.*:ALL,GRANT'
-         state: present
-    - name: Create a new database with name 'arm_test1'
-      when: "'mysql1' in group_names"
-      community.mysql.mysql_db:
-        name: arm_test1
-        login_user: root
-        login_password: {{Your_mysql_password}}
-        login_host: localhost
-        state: present
-        login_unix_socket: /run/mysqld/mysqld.sock
-    - name: Copy database dump file
-      when: "'mysql1' in group_names"    
-      copy:
-       src: path/to/table1.sql
-       dest: /tmp
-    - name: Create a table with dummy values in database
-      when: "'mysql1' in group_names"    
-      community.mysql.mysql_db:
-       name: arm_test1
-       login_user: root
-       login_password: {{Your_mysql_password}}
-       login_host: localhost
-       state: import
-       target: /tmp/table1.sql
-    - name: Create a new database with name 'arm_test2'
-      when: "'mysql2' in group_names"
-      community.mysql.mysql_db:
-        name: arm_test2
-        login_user: root
-        login_password: {{Your_mysql_password}}
-        login_host: localhost
-        state: present
-        login_unix_socket: /run/mysqld/mysqld.sock
-    - name: Copy database dump file
-      when: "'mysql2' in group_names"    
-      copy:
-       src: path/to/table2.sql
-       dest: /tmp
-    - name: Create a table with dummy values in database
-      when: "'mysql2' in group_names"    
-      community.mysql.mysql_db:
-       name: arm_test2
-       login_user: root
-       login_password: {{Your_mysql_password}}
-       login_host: localhost
-       state: import
-       target: /tmp/table2.sql       
-    - name: MySQL secure installation
-      become: yes
-      expect:
-        command: mysql_secure_installation
-        responses:
-           'Enter current password for root': '{{Your_mysql_password}}'
-           'Set root password': 'n'
-           'Remove anonymous users': 'y'
-           'Disallow root login remotely': 'n'
-           'Remove test database': 'y'
-           'Reload privilege tables now': 'y'
-        timeout: 1
-      register: secure_mysql
-      failed_when: "'... Failed!' in secure_mysql.stdout_lines"
-    - name: Enable remote login by changing bind-address
-      lineinfile:
-         path: /etc/mysql/mysql.conf.d/mysqld.cnf
-         regexp: '^bind-address'
-         line: 'bind-address = 0.0.0.0'
-         backup: yes
-      notify:
-         - Restart mysql
-  handlers:
-    - name: Restart mysql
-      service:
-        name: mysql
-        state: restarted
-```
-
-**NOTE:-** We are using [table1.sql](https://github.com/hirnimeshrampuresoftware/arm-software-developers-ads/files/10729309/table1.txt) and [table2.sql](https://github.com/hirnimeshrampuresoftware/arm-software-developers-ads/files/10729310/table2.txt)
- script file to dump data in `MYSQL_TEST[0]` AND `MYSQL_TEST[1]` instances respectively. Specify the path of the files accordingly. Replace `{{Your_mysql_password}}` and `{{Give_any_password}}` with your own password.
-
-### Ansible Commands
-To run a Playbook, we need to use the `ansible-playbook` command.
-```console
-ansible-playbook {your_yml_file} -i {your_inventory_file} --key-file {path_to_private_key}
-```
-**NOTE:-** Replace `{your_yml_file}`, `{your_inventory_file}` and `{path_to_private_key}` with your values.
-
-![ansible-start-final](https://user-images.githubusercontent.com/71631645/217766884-ec19676f-11b2-4f20-b06f-dd307b08febc.jpg)
-
-Here is the output after the successful execution of the `ansible-playbook` commands.
-
-![ansible-end-final](https://user-images.githubusercontent.com/71631645/217766981-3e00b3f6-6ba8-47eb-9c8d-fefcd1685e36.jpg)
+An Ansible Playbook installs & enables MySQL in the instances and creates databases & tables inside them. To configure MySQL through Ansible and run the Playbook, follow this [documentation](/content/learning-paths/server-and-cloud/memcached/memcached_mysql_aws.md#configure-mysql-through-ansible).
 
 ## Deploy Memcached as a cache for MySQL using Python
 We create two `.py` files on the host machine to deploy Memcached as a MySQL cache using Python: **values.py** and **mem.py**.  
