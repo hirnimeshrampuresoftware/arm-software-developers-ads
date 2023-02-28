@@ -25,10 +25,10 @@ Following tools are required on the computer you are using. Follow the links to 
 ## Deploy MySQL instances via Terraform
 
 ### Acquire user credentials
-To obtain user access credentials, follow this [documentation](/content/learning-paths/server-and-cloud/gcp/terraform.md#acquire-user-credentials).
+To obtain user access credentials, follow this [documentation](/learning-paths/server-and-cloud/gcp/terraform#acquire-user-credentials).
 
 ### Generate key-pair (public key, private key)
-Before using Terraform, first generate the key-pair (public key and private key) using ssh-keygen. Then associate both public and private keys with Arm VMs. To generate the key-pair, follow this [documentation](/content/learning-paths/server-and-cloud/gcp/terraform.md#generate-key-pairpublic-key-private-key-using-ssh-keygen).
+Before using Terraform, first generate the key-pair (public key and private key) using ssh-keygen. Then associate both public and private keys with Arm VMs. To generate the key-pair, follow this [documentation](/learning-paths/server-and-cloud/gcp/terraform#generate-key-pairpublic-key-private-key-using-ssh-keygen).
 
 ### Create Terraform file (main.tf)
 After generating the keys, we have to create the MySQL instances. Then we will push our public key to the authorized_keys folder in ~/.ssh. We will also create a security group that opens inbound ports `22` (ssh) and `3306` (MySQL). Below is a Terraform file called main.tf that will do this for us. Here we are creating 2 instances.
@@ -99,10 +99,10 @@ ansible_user=ubuntu
 **NOTE**:- Replace the path of `public_key` with its respective value.
 
 ### Terraform Commands
-To deploy the instances, we need to initialize Terraform, generate an execution plan and apply the execution plan to our cloud infrastructure. Follow this [documentation](/content/learning-paths/server-and-cloud/gcp/terraform.md#terraform-commands) to deploy the **main.tf** file.
+To deploy the instances, we need to initialize Terraform, generate an execution plan and apply the execution plan to our cloud infrastructure. Follow this [documentation](/learning-paths/server-and-cloud/gcp/terraform#terraform-commands) to deploy the **main.tf** file.
 
 ## Configure MySQL through Ansible
-An Ansible Playbook installs & enables MySQL in the instances and creates databases & tables inside them. To configure MySQL through Ansible and run the Playbook, follow this [documentation](/content/learning-paths/server-and-cloud/memcached/memcached_mysql_aws.md#configure-mysql-through-ansible).
+An Ansible Playbook installs & enables MySQL in the instances and creates databases & tables inside them. To configure MySQL through Ansible and run the Playbook, follow this [documentation](/learning-paths/server-and-cloud/memcached/memcached_mysql_aws#configure-mysql-through-ansible).
 
 ## Deploy Memcached as a cache for MySQL using Python
-To deploy Memcached as a cache for MySQL using Python, follow this [documentation](/content/learning-paths/server-and-cloud/memcached/memcached_mysql_aws.md#deploy-memcached-as-a-cache-for-mysql-using-python).
+To deploy Memcached as a cache for MySQL using Python, follow this [documentation](/learning-paths/server-and-cloud/memcached/memcached_mysql_aws#deploy-memcached-as-a-cache-for-mysql-using-python).
