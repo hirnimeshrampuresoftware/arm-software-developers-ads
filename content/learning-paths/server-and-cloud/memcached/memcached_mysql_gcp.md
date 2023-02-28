@@ -99,7 +99,7 @@ ansible_user=ubuntu
 **NOTE**:- Replace the path of `public_key` with its respective value.
 
 ### Terraform Commands
-To deploy the instances, we need to initialize Terraform, generate an execution plan and apply the execution plan to our cloud infrastructure. Follow this [documentation](/content/learning-paths/server-and-cloud/mysql/ec2_deployment.md#terraform-commands) to deploy the **main.tf** file.
+To deploy the instances, we need to initialize Terraform, generate an execution plan and apply the execution plan to our cloud infrastructure. Follow this [documentation](/content/learning-paths/server-and-cloud/gcp/terraform.md#terraform-commands) to deploy the **main.tf** file.
 
 ## Configure MySQL through Ansible
 An Ansible Playbook installs & enables MySQL in the instances and creates databases & tables inside them. To configure MySQL through Ansible and run the Playbook, follow this [documentation](/content/learning-paths/server-and-cloud/memcached/memcached_mysql_aws.md#configure-mysql-through-ansible).
