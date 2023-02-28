@@ -12,7 +12,7 @@ layout: "learningpathall"
 
 Any computer which has the required tools installed can be used for this section. 
 
-You will need an Azure portal account. Create an account if needed.
+You will need an [Azure portal account](https://azure.microsoft.com/en-in/get-started/azure-portal). Create an account if needed.
 
 Following tools are required on the computer you are using. Follow the links to install the required tools.
 * [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=apt)
