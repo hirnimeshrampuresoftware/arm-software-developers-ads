@@ -230,11 +230,11 @@ ansible-playbook {your_yml_file} -i {your_inventory_file} --key-file {path_to_pr
 ```
 **NOTE:-** Replace `{your_yml_file}`, `{your_inventory_file}` and `{path_to_private_key}` with your values.
 
-![ansible-start-final](https://user-images.githubusercontent.com/71631645/217766884-ec19676f-11b2-4f20-b06f-dd307b08febc.jpg)
+![ansible-end-finalfinalfinalfinal](https://user-images.githubusercontent.com/71631645/221770813-0edcb4d0-ca99-48c6-ab60-500eee6ca4d0.jpg)
 
 Here is the output after the successful execution of the `ansible-playbook` commands.
 
-![ansible-end-final](https://user-images.githubusercontent.com/71631645/217766981-3e00b3f6-6ba8-47eb-9c8d-fefcd1685e36.jpg)
+![this](https://user-images.githubusercontent.com/71631645/221770451-320f9ce9-90fb-44ae-9a0d-45d54214e903.jpg)
 
 ## Deploy Memcached as a cache for MySQL using Python
 We create two `.py` files on the host machine to deploy Memcached as a MySQL cache using Python: **values.py** and **mem.py**.  
