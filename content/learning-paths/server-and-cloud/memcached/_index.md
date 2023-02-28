@@ -10,6 +10,7 @@ who_is_this_for: This is an introductory topic for software developers who want 
 learning_objectives:
     - Install and run memcached on your Arm-based cloud server
     - Use an open-source benchmark to test memcached performance
+    - Deploy memcached as a cache for MySQL
 
 prerequisites:
     - An [Arm based instance](/learning-paths/server-and-cloud/csp/) from an appropriate cloud service provider.
