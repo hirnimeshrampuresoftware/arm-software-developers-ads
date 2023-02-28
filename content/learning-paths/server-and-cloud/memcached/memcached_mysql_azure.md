@@ -239,4 +239,4 @@ An Ansible Playbook installs & enables MySQL in the instances and creates databa
 
 
 ## Deploy Memcached as a cache for MySQL using Python
-To deploy Memcached as a cache for MySQL using Python, follow this [documentation](/content/learning-paths/server-and-cloud/memcached/memcached_mysql_aws.md#configure-mysql-through-ansible).
+To deploy Memcached as a cache for MySQL using Python, follow this [documentation](/content/learning-paths/server-and-cloud/memcached/memcached_mysql_aws.md#deploy-memcached-as-a-cache-for-mysql-using-python).
