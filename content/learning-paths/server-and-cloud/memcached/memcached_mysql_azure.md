@@ -19,7 +19,7 @@ Following tools are required on the computer you are using. Follow the links to 
 * [Ansible](https://www.cyberciti.biz/faq/how-to-install-and-configure-latest-version-of-ansible-on-ubuntu-linux/)
 * [Terraform](/install-tools/terraform)
 * [Python](https://beebom.com/how-install-python-ubuntu-linux/)
-* [Memcached](/learning-paths/server-and-cloud/memcached/memcached.md#install-memcached-from-source-on-arm-servers)
+* [Memcached](/learning-paths/server-and-cloud/memcached/memcached#install-memcached-from-source-on-arm-servers)
 * [Telnet](https://adamtheautomator.com/linux-to-install-telnet/)
 
 ## Deploy MySQL instances via Terraform
