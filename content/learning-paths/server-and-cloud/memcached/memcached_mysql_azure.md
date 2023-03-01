@@ -15,11 +15,11 @@ Any computer which has the required tools installed can be used for this section
 You will need an [Azure portal account](https://azure.microsoft.com/en-in/get-started/azure-portal). Create an account if needed.
 
 Following tools are required on the computer you are using. Follow the links to install the required tools.
-* [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=apt)
+* [Azure CLI](/install-tools/azure-cli)
 * [Ansible](https://www.cyberciti.biz/faq/how-to-install-and-configure-latest-version-of-ansible-on-ubuntu-linux/)
-* [Terraform](https://developer.hashicorp.com/terraform/cli/install/apt)
+* [Terraform](/install-tools/terraform)
 * [Python](https://beebom.com/how-install-python-ubuntu-linux/)
-* [Memcached](https://github.com/memcached/memcached/wiki/Install)
+* [Memcached](/learning-paths/server-and-cloud/memcached/memcached.md#install-memcached-from-source-on-arm-servers)
 * [Telnet](https://adamtheautomator.com/linux-to-install-telnet/)
 
 ## Deploy MySQL instances via Terraform
@@ -32,7 +32,7 @@ For authentication, follow this [documentation](/learning-paths/server-and-cloud
 Before using Terraform, first generate the key-pair (public key and private key) using ssh-keygen. Then associate both public and private keys with Azure instances. To generate the key-pair, follow this [documentation](/learning-paths/server-and-cloud/azure/terraform#generate-key-pair-public-key-private-key-using-ssh-keygen).
 
 ### Create Terraform files
-After generating the keys, we have to create the MySQL instances. We will create a security group that opens inbound ports `22` (ssh) and `3306` (MySQL). The Terraform configuration is broken into three files: **providers.tf**, **variables.tf** and **main.tf**. Here we are creating 2 instances.
+After generating the keys, we have to create the MySQL instances. We will create a security group that opens inbound ports **22** (ssh) and **3306** (MySQL). The Terraform configuration is broken into three files: **providers.tf**, **variables.tf** and **main.tf**. Here we are creating 2 instances.
 
 Add the following code in **providers.tf** file to configure Terraform to communicate with Azure:
     
@@ -229,7 +229,7 @@ ansible_user=azureuser
                 EOF
 }
 ```
-**NOTE**:- Replace the path of `public_key` with its respective value.
+**NOTE**:- Replace the path of **public_key** with its respective value.
 
 ### Terraform Commands
 To deploy the instances, we need to initialize Terraform, generate an execution plan and apply the execution plan to our cloud infrastructure. Follow this [documentation](/learning-paths/server-and-cloud/azure/terraform#terraform-commands) to deploy the **main.tf** file.
