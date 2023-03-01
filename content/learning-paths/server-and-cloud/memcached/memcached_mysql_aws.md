@@ -17,9 +17,9 @@ You will need [an AWS account](https://portal.aws.amazon.com/billing/signup?nc2=
 Following tools are required on the computer you are using. Follow the links to install the required tools.
 * [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
 * [Ansible](https://www.cyberciti.biz/faq/how-to-install-and-configure-latest-version-of-ansible-on-ubuntu-linux/)
-* [Terraform](https://developer.hashicorp.com/terraform/cli/install/apt)
+* [Terraform](/install-tools/terraform)
 * [Python](https://beebom.com/how-install-python-ubuntu-linux/)
-* [Memcached](https://github.com/memcached/memcached/wiki/Install)
+* [Memcached](/learning-paths/server-and-cloud/memcached/memcached#install-memcached-from-source-on-arm-servers)
 * [Telnet](https://adamtheautomator.com/linux-to-install-telnet/)
 
 ## Deploy MySQL instances via Terraform
@@ -32,7 +32,7 @@ To generate an access key and secret key, follow this [documentation](/learning-
 Before using Terraform, first generate the key-pair (public key and private key) using ssh-keygen. Then associate both public and private keys with AWS EC2 instances. To generate the key-pair, follow this [documentation](/learning-paths/server-and-cloud/aws/terraform#generate-key-pairpublic-key-private-key-using-ssh-keygen).
 
 ### Create Terraform file (main.tf)
-After generating the keys, we have to create the MySQL instances. Then we will push our public key to the **authorized_keys** folder in **~/.ssh**. We will also create a security group that opens inbound ports `22` (ssh) and `3306` (MySQL). Below is a Terraform file called **main.tf** that will do this for us. Here we are creating 2 instances.
+After generating the keys, we have to create the MySQL instances. Then we will push our public key to the **authorized_keys** folder in **~/.ssh**. We will also create a security group that opens inbound ports **22** (ssh) and **3306** (MySQL). Below is a Terraform file called **main.tf** that will do this for us. Here we are creating 2 instances.
     
 ```console
 provider "aws" {
@@ -106,13 +106,13 @@ resource "aws_key_pair" "deployer" {
 } 
     
 ```
-**NOTE:-** Replace `public_key`, `access_key`, `secret_key`, and `key_name` with respective values. The Terraform commands will automatically generate the **inventory.txt** file on the path provided in the filename. Specify the path accordingly.
+**NOTE:-** Replace **public_key**, **access_key**, **secret_key**, and **key_name** with respective values. The Terraform commands will automatically generate the **inventory.txt** file on the path provided in the filename. Specify the path accordingly.
 
 ### Terraform Commands
 To deploy the instances, we need to initialize Terraform, generate an execution plan and apply the execution plan to our cloud infrastructure. Follow this [documentation](/learning-paths/server-and-cloud/aws/terraform#terraform-commands) to deploy the **main.tf** file.
 
 ## Configure MySQL through Ansible
-To run Ansible, we have to create a `.yml` file, which is also known as an `Ansible-Playbook`. The Playbook contains a collection of tasks.            
+To run Ansible, we have to create a **.yml** file, which is also known as an **Ansible-Playbook**. The Playbook contains a collection of tasks.            
 Here is the complete YML file for Ansible-Playbook for both instances. This Playbook installs & enables MySQL in the instances and creates databases & tables inside them.  
 
 ```console
@@ -221,30 +221,30 @@ Here is the complete YML file for Ansible-Playbook for both instances. This Play
 ```
 
 **NOTE:-** We are using [table1.sql](https://github.com/hirnimeshrampuresoftware/arm-software-developers-ads/files/10729309/table1.txt) and [table2.sql](https://github.com/hirnimeshrampuresoftware/arm-software-developers-ads/files/10729310/table2.txt)
- script file to dump data in `MYSQL_TEST[0]` AND `MYSQL_TEST[1]` instances respectively. Specify the path of the files accordingly. Replace `{{Your_mysql_password}}` and `{{Give_any_password}}` with your own password.
+ script file to dump data in **MYSQL_TEST[0]** and **MYSQL_TEST[1]** instances respectively. Specify the path of the files accordingly. Replace **{{Your_mysql_password}}** and **{{Give_any_password}}** with your own password.
 
 ### Ansible Commands
-To run a Playbook, we need to use the `ansible-playbook` command.
+To run a Playbook, we need to use the **ansible-playbook** command.
 ```console
 ansible-playbook {your_yml_file} -i {your_inventory_file} --key-file {path_to_private_key}
 ```
-**NOTE:-** Replace `{your_yml_file}`, `{your_inventory_file}` and `{path_to_private_key}` with your values.
+**NOTE:-** Replace **{your_yml_file}**, **{your_inventory_file}** and **{path_to_private_key}** with your values.
 
 ![ansible-end-finalfinalfinalfinal](https://user-images.githubusercontent.com/71631645/221770813-0edcb4d0-ca99-48c6-ab60-500eee6ca4d0.jpg)
 
-Here is the output after the successful execution of the `ansible-playbook` commands.
+Here is the output after the successful execution of the **ansible-playbook** commands.
 
 ![this](https://user-images.githubusercontent.com/71631645/221770451-320f9ce9-90fb-44ae-9a0d-45d54214e903.jpg)
 
 ## Deploy Memcached as a cache for MySQL using Python
-We create two `.py` files on the host machine to deploy Memcached as a MySQL cache using Python: **values.py** and **mem.py**.  
+We create two **.py** files on the host machine to deploy Memcached as a MySQL cache using Python: **values.py** and **mem.py**.  
 
 **values.py** to store the IP addresses of the instances and the databases created in them.
 ```console
 MYSQL_TEST=[["{{public_ip of MYSQL_TEST[0]}}", "arm_test1"],
 ["{{public_ip of MYSQL_TEST[1]}}", "arm_test2"]]
 ```
-We are using the `arm_test1` and `arm_test2` databases created above through Ansible-Playbook. Replace `{{public_ip of MYSQL_TEST[0]}}` & `{{public_ip of MYSQL_TEST[1]}}` with the public IPs generated in the **inventory.txt** file after running the Terraform commands.       
+We are using the **arm_test1** and **arm_test2** databases created above through Ansible-Playbook. Replace **{{public_ip of MYSQL_TEST[0]}}** & **{{public_ip of MYSQL_TEST[1]}}** with the public IPs generated in the **inventory.txt** file after running the Terraform commands.       
 
 **mem.py** to access data from Memcached and, if not present, store it in the Memcached.       
 ```console
@@ -293,13 +293,13 @@ for i in range(0,2):
 else:
     print("this database doesn't exist")            
 ```
-Replace `{{Your_database_user}}` & `{{Your_database_password}}` with the database user and password created through Ansible-Playbook. Also change the `range` in `for loop` according to the number of instances created.
+Replace **{{Your_database_user}}** & **{{Your_database_password}}** with the database user and password created through Ansible-Playbook. Also change the **range** in **for loop** according to the number of instances created.
 
 To execute the script, run the following command:
 ```console
-python3 mem.py -db <database_name> -k <key> -q <query>
+python3 mem.py -db {database_name} -k {key} -q {query}
 ```
-Replace `<database_name>` with the database you want to access, `<query>` with the query you want to run in the database and `<key>` with a variable to store the result of the query in Memcached.
+Replace **{database_name}** with the database you want to access, **{query}** with the query you want to run in the database and **{key}** with a variable to store the result of the query in Memcached.
 
 When the script is executed for the first time, the data is loaded from the MySQL database and stored on the Memcached server.
 
@@ -320,6 +320,6 @@ To retrieve data from Memcached through Telnet:
 ```console
 get <key>
 ```
-**NOTE:-** Key is the variable in which we store the data. In the above command, we are storing the data from table1 and table2 in `AA` and `BB` respectively.
+**NOTE:-** Key is the variable in which we store the data. In the above command, we are storing the data from table1 and table2 in **AA** and **BB** respectively.
 
 ![telnetfinalfinal](https://user-images.githubusercontent.com/71631645/218663147-8a7e0d6f-39d5-4b2e-9487-501d3ffbf40b.jpg)
