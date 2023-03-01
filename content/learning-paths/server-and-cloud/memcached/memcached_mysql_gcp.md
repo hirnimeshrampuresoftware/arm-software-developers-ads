@@ -17,9 +17,9 @@ You will need a [Google Cloud account](https://console.cloud.google.com/). Creat
 Following tools are required on the computer you are using. Follow the links to install the required tools.
 * [Google Cloud CLI](https://cloud.google.com/sdk/docs/install-sdk#deb)
 * [Ansible](https://www.cyberciti.biz/faq/how-to-install-and-configure-latest-version-of-ansible-on-ubuntu-linux/)
-* [Terraform](https://developer.hashicorp.com/terraform/cli/install/apt)
+* [Terraform](/install-tools/terraform)
 * [Python](https://beebom.com/how-install-python-ubuntu-linux/)
-* [Memcached](https://github.com/memcached/memcached/wiki/Install)
+* [Memcached](/learning-paths/server-and-cloud/memcached/memcached#install-memcached-from-source-on-arm-servers)
 * [Telnet](https://adamtheautomator.com/linux-to-install-telnet/)
 
 ## Deploy MySQL instances via Terraform
@@ -31,7 +31,7 @@ To obtain user access credentials, follow this [documentation](/learning-paths/s
 Before using Terraform, first generate the key-pair (public key and private key) using ssh-keygen. Then associate both public and private keys with Arm VMs. To generate the key-pair, follow this [documentation](/learning-paths/server-and-cloud/gcp/terraform#generate-key-pairpublic-key-private-key-using-ssh-keygen).
 
 ### Create Terraform file (main.tf)
-After generating the keys, we have to create the MySQL instances. Then we will push our public key to the authorized_keys folder in ~/.ssh. We will also create a security group that opens inbound ports `22` (ssh) and `3306` (MySQL). Below is a Terraform file called main.tf that will do this for us. Here we are creating 2 instances.
+After generating the keys, we have to create the MySQL instances. Then we will push our public key to the authorized_keys folder in ~/.ssh. We will also create a security group that opens inbound ports **22** (ssh) and **3306** (MySQL). Below is a Terraform file called main.tf that will do this for us. Here we are creating 2 instances.
     
 ```console
 provider "google" {
@@ -96,7 +96,7 @@ ansible_user=ubuntu
                 EOF
 }
 ```
-**NOTE**:- Replace the path of `public_key` with its respective value.
+**NOTE**:- Replace the path of **public_key** with its respective value.
 
 ### Terraform Commands
 To deploy the instances, we need to initialize Terraform, generate an execution plan and apply the execution plan to our cloud infrastructure. Follow this [documentation](/learning-paths/server-and-cloud/gcp/terraform#terraform-commands) to deploy the **main.tf** file.
