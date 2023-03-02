@@ -8,13 +8,16 @@ weight: 5 # 1 is first, 2 is second, etc.
 layout: "learningpathall"
 ---
 
-## Install Redis on a single GCP Arm based instance
+## Before you begin
 
-## Prerequisites
-* A [Google cloud account](https://console.cloud.google.com/?hl=en-au)
+Any computer which has the required tools installed can be used for this section. 
+
+You will need a [Google cloud account](https://console.cloud.google.com/?hl=en-au). Create an account if needed.
+
+Following tools are required on the computer you are using. Follow the links to install the required tools.
 * [Google Cloud CLI](https://cloud.google.com/sdk/docs/install-sdk#deb)
-* [Terraform](/content/install-tools/terraform.md)
 * [Ansible](https://www.cyberciti.biz/faq/how-to-install-and-configure-latest-version-of-ansible-on-ubuntu-linux/)
+* [Terraform](/install-tools/terraform)
 * [Redis CLI](https://redis.io/docs/getting-started/installation/install-redis-on-linux/)
 
 ## Deploy GCP Arm based instance via terraform
@@ -76,7 +79,7 @@ ansible-target1 ansible_connection=ssh ansible_host=${google_compute_instance.vm
                 EOF
 }
 ```
-**NOTE:-** Replace `{project_id}` and `{public_key_location}` with respective values.
+**NOTE:-** Replace **{project_id}** and **{public_key_location}** with respective values.
 
 ## Terraform commands
 
