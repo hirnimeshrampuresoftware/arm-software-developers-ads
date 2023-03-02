@@ -8,14 +8,16 @@ weight: 4 # 1 is first, 2 is second, etc.
 layout: "learningpathall"
 ---
 
-##  Install Redis on a single Azure Arm based instance
+## Before you begin
 
-## Prerequisites
+Any computer which has the required tools installed can be used for this section. 
 
-* An [Azure portal account](https://azure.microsoft.com/en-in/get-started/azure-portal)
-* [Terraform](/content/install-tools/terraform.md)
-* [Ansible](https://www.cyberciti.biz/faq/how-to-install-and-configure-latest-version-of-ansible-on-ubuntu-linux/)
+You will need [an Azure portal account](https://azure.microsoft.com/en-in/get-started/azure-portal). Create an account if needed.
+
+Following tools are required on the computer you are using. Follow the links to install the required tools.
 * [Azure CLI](/content/install-tools/azure-cli.md)
+* [Ansible](https://www.cyberciti.biz/faq/how-to-install-and-configure-latest-version-of-ansible-on-ubuntu-linux/)
+* [Terraform](/install-tools/terraform)
 * [Redis CLI](https://redis.io/docs/getting-started/installation/install-redis-on-linux/)
 
 
@@ -234,7 +236,7 @@ output "public_ip_address" {
 To deploy the instances, we need to initialize Terraform, generate an execution plan and apply the execution plan to our cloud infrastructure. Follow this [documentation](/content/learning-paths/server-and-cloud/redis/aws_deployment.md#terraform-commands) to deploy the **main.tf** file.
 
 ## Install Redis using Ansible
-To run Ansible, we have to create a `.yml` file, which is also known as `Ansible-Playbook`. The following playbook contains a collection of tasks which install Redis on single node manually.
+To run Ansible, we have to create a **.yml** file, which is also known as **Ansible-Playbook**. The following playbook contains a collection of tasks which install Redis on single node manually.
 
 Here is the complete **deploy_redis.yml** file of Ansible-Playbook
 ```console
@@ -284,15 +286,15 @@ Here is the complete **deploy_redis.yml** file of Ansible-Playbook
       shell: redis-cli -p 6379 CONFIG SET requirepass "{password}"
       become_user: azureuser
 ```
-**NOTE:-** Replace `{password}` with respective value.
+**NOTE:-** Replace **{password}** with respective value.
 
-To run a Playbook, we need to use the `ansible-playbook` command.
+To run a Playbook, we need to use the **ansible-playbook** command.
 ```console
 ansible-playbook {your_yml_file} -i {your_inventory_file} --key-file {path_to_private_key}
 ```
-**NOTE:-** Replace `{your_yml_file}`, `{your_inventory_file}` and `{path_to_private_key}` with respective values.
+**NOTE:-** Replace **{your_yml_file}, {your_inventory_file}** and **{path_to_private_key}** with respective values.
 
-Here is the output after the successful execution of the `ansible-playbook` command.
+Here is the output after the successful execution of the **ansible-playbook** command.
 
 ![ansible-azure](https://user-images.githubusercontent.com/71631645/220894517-074dd813-578d-4354-b2d4-40ec7a1565e1.jpg)
 
