@@ -3,7 +3,7 @@ title: Run memcached on Arm servers
 
 description: Learn how to install memcached on Arm servers
 
-minutes_to_complete: 10
+minutes_to_complete: 30
 
 who_is_this_for: This is an introductory topic for software developers who want to use memcached as their in-memory key-value store for mobile, web, gaming or e-Commerce applications.
 
