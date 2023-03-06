@@ -24,7 +24,7 @@ Following tools are required on the computer you are using. Follow the links to 
 
 Before deploying AWS Arm based instance via Terraform, generate [Access keys](/content/learning-paths/server-and-cloud/redis/aws_deployment.md#generate-access-keys-access-key-id-and-secret-access-key) and [key-pair using ssh keygen](/content/learning-paths/server-and-cloud/redis/aws_deployment.md#generate-key-pairpublic-key-private-key-using-ssh-keygen).
 
-After generating the public and private keys, we will push our public key to the **authorized_keys** folder in **~/.ssh**. We will also create a security group that opens inbound ports **22**(ssh). Also every Redis Cluster node requires two TCP connections open. The normal Redis TCP port used to serve clients, for example **6379**, plus the port obtained by adding 10000 to the data port, so **16379** in the example. Below is a Terraform file named **main.tf** which will do this for us. Here we are creating 6 instances.
+After generating the public and private keys, we will push our public key to the **authorized_keys** folder in **~/.ssh**. We will also create a security group that opens inbound port **22**(ssh). Also every Redis Cluster node requires two TCP connections open. The normal Redis TCP port used to serve clients, for example **6379**, plus the port obtained by adding 10000 to the data port, so **16379** in the example. Below is a Terraform file named **main.tf** which will do this for us. Here we are creating 6 instances.
 
 
 ```console
@@ -107,7 +107,7 @@ resource "aws_key_pair" "deployer" {
 To deploy the instances, we need to initialize Terraform, generate an execution plan and apply the execution plan to our cloud infrastructure. Follow this [documentation](/content/learning-paths/server-and-cloud/redis/aws_deployment.md#terraform-commands) to deploy the **main.tf** file.
 
 ## Install Redis in a multi-node configuration using Ansible
-To run Ansible, we have to create a **.yml** file, which is also known as **Ansible-Playbook**. The following playbook contains a collection of tasks which install Redis in multi-node configuration (3 primary and 3 replica nodes). In our example, we installing Redis Cluster in the 6 instances created above. 
+To run Ansible, we have to create a **.yml** file, which is also known as **Ansible-Playbook**. The following playbook contains a collection of tasks which install Redis in multi-node configuration (3 primary and 3 replica nodes). 
 
 Here is the complete **deploy_redis.yml** file of Ansible-Playbook
 ```console
@@ -157,27 +157,49 @@ Here is the complete **deploy_redis.yml** file of Ansible-Playbook
         chdir: "/home/ubuntu/redis"
       become_user: ubuntu
 ```
-**NOTE:-** Since the allocation of master and slave nodes is random at the time of cluster creation, it is difficult to know whether the nodes at ports `6001-6006` are master or slave nodes. Hence, for the multi-node configuration, we need to turn off **protected-mode**, which is enabled by default, so that we can connect to master and slave nodes. 
+**NOTE:-** Since the allocation of primary and replica nodes is random at the time of cluster creation, it is difficult to know which nodes are primary and which nodes are replica. Hence, for the multi-node configuration, we need to turn off **protected-mode**, which is enabled by default, so that we can connect to primary and replica nodes. Also, the **bind address** is by default set to `127.0.0.1` due to which port 6379 becomes unavailable for binding with the public IP of the remote server. Thus, we set the bind configuration option to `0.0.0.0`.
 
-To run a Playbook, we need to use the `ansible-playbook` command.
+To run a Playbook, we need to use the **ansible-playbook** command.
 ```console
 ansible-playbook {your_yml_file} -i {your_inventory_file} --key-file {path_to_private_key}
 ```
-**NOTE:-** Replace `{your_yml_file}`, `{your_inventory_file}` and `{path_to_private_key}` with orignal values.
+**NOTE:-** Replace **{your_yml_file}**, **{your_inventory_file}** and **{path_to_private_key}** with your values.
 
-![image](https://user-images.githubusercontent.com/90673309/215947178-49a1624f-f7c7-4594-8387-5c899913f611.png)
+![ansible-multi-atsrt](https://user-images.githubusercontent.com/71631645/223043471-ab72be63-94af-49d6-935c-84ca8f04b827.jpg)
 
-Here is the output after the successful execution of the `ansible-playbook` command.
+Here is the output after the successful execution of the **ansible-playbook** command.
 
-![image](https://user-images.githubusercontent.com/90673309/215947195-d4186c77-afcd-4d88-89b9-0265459bcbcf.png)
+![ansible-multi-end](https://user-images.githubusercontent.com/71631645/223043499-2399df9b-7017-4f57-9735-e002cbab5f8f.jpg)
+
+## Create a Redis cluster
+
+After the Redis installation has been completed on all servers, lift the cluster up with the help of this command:
+
+```console
+redis-cli --cluster create {redis-deployment[0].public_ip}:6379 {redis-deployment[1].public_ip}:6379 {redis-deployment[2].public_ip}:6379 {redis-deployment[3].public_ip}:6379 {redis-deployment[4].public_ip}:6379 {redis-deployment[5].public_ip}:6379 --cluster-replicas 1
+```
+**NOTE:-** Replace **redis-deployment[n].public_ip** with their respective values.
+
+Here is the output after the successful execution of the above command.
+
+![cluster-start](https://user-images.githubusercontent.com/71631645/223050537-3a775d62-fefe-47e0-86c6-7cd0cb5ce542.jpg)
+![cluster-end](https://user-images.githubusercontent.com/71631645/223050545-83928cf3-b9b4-4496-906e-8be4aac2e26c.jpg)
 
 ## Connecting to Redis cluster from local machine
+
+You can control the Redis cluster with the following command.
+```console
+redis-cli -c -h {redis-deployment[n].public_ip} -p 6379 cluster nodes
+```
+**NOTE:-** Replace **{redis-deployment[n].public_ip}** with IP of any of the instances created.
+
+![cluster-nodes](https://user-images.githubusercontent.com/71631645/223085999-c66f7323-da1b-4425-bb03-284b507369e3.jpg)
 
 We can connect to remote Redis cluster from local machine using:
 
 ```console
-redis-cli -c -h {ansible_host} -p {port}
+redis-cli -c -h {redis-deployment[n].public_ip} -p 6379
 ```
-**Note:-** Get value of `{ansible_host}` from **inventory.txt** file and replace `{port}` with its respective value. The `redis-cli` will run in interactive mode. We can connect to any port from 6001 to 6006, the command will get redirected to master node. Before running any other command, we need to authorize redis with `{password}` set by us in ansible `.yml` file
+**Note:-** Replace **{redis-deployment[n].public_ip}** with the IP of any of the instances created. The redis-cli will run in interactive mode. We can connect to any of the nodes, the command will get redirected to primary node.
 
-![image](https://user-images.githubusercontent.com/90673309/215739986-33c378a5-2a35-474c-a621-c292d1e7b357.png)
+![redis-cli-final](https://user-images.githubusercontent.com/71631645/223086054-b9ed9bf6-5ec2-4278-9922-8e0a37835686.jpg)
