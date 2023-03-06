@@ -1,7 +1,7 @@
 ---
-title: Run memcached on Arm servers and measure its performance
+title: Run memcached on Arm servers
 
-description: Learn how to install and measure the performance of memcached on Arm servers
+description: Learn how to install memcached on Arm servers
 
 minutes_to_complete: 10
 
